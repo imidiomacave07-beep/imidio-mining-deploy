@@ -1,0 +1,18 @@
+{
+  "usuarios": [
+    {
+      "id": 1,
+      "nome": "João",
+      "saldo": 1000
+    },
+    {
+      "id": 2,
+      "nome": "Maria",
+      "saldo": 1500
+    }
+  ],
+  "configuracoes": {
+    "taxaMineracao": 0.05,
+    "maximoUsuarios": 100
+  }
+}

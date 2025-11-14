@@ -1,0 +1,3 @@
+# exemplo: renomear pasta ou arquivo com problema
+mv "🚀 Imidio Mining" imidio-mining
+mv "server.js" server.js   # apenas para garantir que não tem espaços
