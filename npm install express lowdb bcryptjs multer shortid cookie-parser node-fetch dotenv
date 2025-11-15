@@ -1,1 +1,0 @@
-npm install express lowdb bcryptjs multer shortid cookie-parser node-fetch dotenv
