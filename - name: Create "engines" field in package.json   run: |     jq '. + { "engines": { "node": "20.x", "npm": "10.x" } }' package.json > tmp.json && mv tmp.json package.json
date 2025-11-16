@@ -1,3 +1,0 @@
-- name: Create "engines" field in package.json
-  run: |
-    jq '. + { "engines": { "node": "20.x", "npm": "10.x" } }' package.json > tmp.json && mv tmp.json package.json
