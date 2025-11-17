@@ -1,34 +1,101 @@
-<div class="container">
-    <div class="title">Bem-vindo à Imidio Mining</div>
-    <div class="subtitle">A sua plataforma de mineração digital</div>
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Imidio Mining</title>
+<style>
+body { background:#0c0c0c; color:#00ff88; font-family:Arial; text-align:center; padding:40px; }
+input, select, button { padding:10px; margin:5px; font-size:16px; border-radius:5px; }
+button { cursor:pointer; font-weight:bold; background:#00ff88; color:#000; border:none; }
+button:hover { background:#00dd88; }
+</style>
+</head>
+<body>
 
-    <form id="cadastroForm">
-        <input type="text" name="nome" placeholder="Nome" required /><br><br>
-        <input type="email" name="email" placeholder="Email" required /><br><br>
-        <input type="password" name="senha" placeholder="Senha" required /><br><br>
-        <button type="submit" class="btn">Criar Conta</button>
-    </form>
-</div>
+<h1>🚀 Imidio Mining</h1>
+<p>Plataforma de mineração digital simulada</p>
+
+<h2>Cadastro</h2>
+<input id="name" placeholder="Nome" /><br/>
+<input id="email" placeholder="Email" /><br/>
+<input id="password" placeholder="Senha" type="password" /><br/>
+<button onclick="register()">Cadastrar</button>
+
+<h2>Login</h2>
+<input id="loginEmail" placeholder="Email" /><br/>
+<input id="loginPassword" placeholder="Senha" type="password" /><br/>
+<button onclick="login()">Entrar</button>
+
+<h2>Plano</h2>
+<select id="planSelect">
+<option value="basic">Basic - 5$/dia</option>
+<option value="pro">Pro - 10$/dia</option>
+<option value="elite">Elite - 20$/dia</option>
+</select>
+<button onclick="choosePlan()">Ativar Plano</button>
+
+<h2>Mineração Simulada</h2>
+<button onclick="mine()">Minerar</button>
+<p id="balance">Saldo: 0</p>
 
 <script>
-    const form = document.getElementById("cadastroForm");
+let currentUser = null;
 
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const formData = {
-            nome: form.nome.value,
-            email: form.email.value,
-            senha: form.senha.value
-        };
+async function register() {
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
 
-        const res = await fetch("/api/cadastro", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData)
-        });
+  const res = await fetch('/register', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({name,email,password})
+  });
+  const data = await res.json();
+  alert(data.message);
+}
 
-        const data = await res.json();
-        alert(data.message);
-        form.reset();
-    });
+async function login() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+
+  const res = await fetch('/login', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({email,password})
+  });
+  const data = await res.json();
+  alert(data.message);
+  if(data.user) currentUser = data.user;
+  document.getElementById('balance').innerText = 'Saldo: ' + (currentUser ? currentUser.balance : 0);
+}
+
+async function choosePlan() {
+  if(!currentUser) { alert('Faça login primeiro'); return; }
+  const plan = document.getElementById('planSelect').value;
+  const res = await fetch('/plan', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({email: currentUser.email, plan})
+  });
+  const data = await res.json();
+  alert(data.message);
+  currentUser = data.user;
+}
+
+async function mine() {
+  if(!currentUser) { alert('Faça login primeiro'); return; }
+  const res = await fetch('/mine', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({email: currentUser.email})
+  });
+  const data = await res.json();
+  alert(data.message);
+  currentUser.balance = data.balance;
+  document.getElementById('balance').innerText = 'Saldo: ' + currentUser.balance;
+}
 </script>
+</body>
+</html>
