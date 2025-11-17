@@ -1,92 +1,49 @@
-const fs = require("fs");
 const express = require("express");
-const cors = require("cors");
+const fs = require("fs");
+const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-app.use(cors());
 app.use(express.json());
+app.use(express.static("public"));
 
-// Caminho para o database
-const dbPath = "./database/db.json";
-
-// Função para ler o database
+// Ler dados do database
+const dbPath = path.join(__dirname, "database", "db.json");
 function readDB() {
-  const data = fs.readFileSync(dbPath);
+  const data = fs.readFileSync(dbPath, "utf-8");
   return JSON.parse(data);
 }
 
-// Função para salvar no database
-function saveDB(data) {
-  fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
-}
-
-// =====================
-// Endpoints
-// =====================
-
-// Rota inicial
+// Rotas
 app.get("/", (req, res) => {
-  res.send("<h1>🚀 Imidio Mining Server está online!</h1><p>Bem-vindo à sua plataforma.</p>");
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Listar planos
-app.get("/plans", (req, res) => {
+// Retorna todos os planos
+app.get("/api/plans", (req, res) => {
   const db = readDB();
   res.json(db.plans);
 });
 
-// Listar métodos de pagamento
-app.get("/payments", (req, res) => {
+// Retorna métodos de pagamento
+app.get("/api/payments", (req, res) => {
   const db = readDB();
   res.json(db.payments);
 });
 
-// Registrar usuário
-app.post("/register", (req, res) => {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password) {
-    return res.status(400).json({ error: "Preencha todos os campos" });
-  }
+// Registrar usuário (simulado)
+app.post("/api/register", (req, res) => {
+  const { name, email } = req.body;
+  if (!name || !email) return res.status(400).json({ error: "Dados incompletos" });
 
   const db = readDB();
-  const userExists = db.users.find(u => u.email === email);
-  if (userExists) {
-    return res.status(400).json({ error: "Usuário já cadastrado" });
-  }
-
-  const newUser = { id: Date.now(), name, email, password, plan: null, balance: 0 };
+  const newUser = { id: db.users.length + 1, name, email, balance: 0, plan: null };
   db.users.push(newUser);
-  saveDB(db);
 
-  res.json({ message: "Cadastro realizado com sucesso", user: newUser });
+  fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
+  res.json({ success: true, user: newUser });
 });
 
-// Consultar usuários
-app.get("/users", (req, res) => {
-  const db = readDB();
-  res.json(db.users);
-});
-
-// Ativar plano para usuário
-app.post("/activate-plan", (req, res) => {
-  const { email, planId } = req.body;
-  const db = readDB();
-
-  const user = db.users.find(u => u.email === email);
-  const plan = db.plans.find(p => p.id === planId);
-
-  if (!user || !plan) return res.status(400).json({ error: "Usuário ou plano inválido" });
-
-  user.plan = plan;
-  saveDB(db);
-
-  res.json({ message: "Plano ativado com sucesso", user });
-});
-
-// =====================
-// Start do servidor
-// =====================
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Servidor Imidio Mining rodando na porta ${PORT}`);
 });
