@@ -11,22 +11,17 @@
             background: #0d0d0d;
             color: white;
             font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
         }
         header {
-            background: #111;
-            padding: 20px;
-            text-align: center;
-            font-size: 26px;
+            font-size: 36px;
             font-weight: bold;
-            border-bottom: 2px solid #00ff99;
-        }
-        .container {
-            text-align: center;
-            padding: 40px;
-        }
-        .title {
-            font-size: 34px;
-            margin-top: 20px;
+            margin-bottom: 10px;
         }
         .subtitle {
             font-size: 20px;
@@ -42,6 +37,8 @@
             cursor: pointer;
             color: black;
             font-weight: bold;
+            margin: 0 10px;
+            transition: 0.3s;
         }
         .btn:hover {
             background: #00dd88;
@@ -50,11 +47,10 @@
 </head>
 <body>
     <header>✨ Imidio Mining</header>
-    <div class="container">
-        <div class="title">Bem-vindo à Imidio Mining</div>
-        <div class="subtitle">A sua plataforma de mineração digital</div>
+    <div class="subtitle">A sua plataforma de mineração digital</div>
+    <div>
         <button class="btn">Criar Conta</button>
-        <button class="btn" style="margin-left: 10px;">Entrar</button>
+        <button class="btn">Entrar</button>
     </div>
 </body>
 </html>
