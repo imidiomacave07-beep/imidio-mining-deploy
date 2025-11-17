@@ -1,101 +1,159 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Imidio Mining</title>
-<style>
-body { background:#0c0c0c; color:#00ff88; font-family:Arial; text-align:center; padding:40px; }
-input, select, button { padding:10px; margin:5px; font-size:16px; border-radius:5px; }
-button { cursor:pointer; font-weight:bold; background:#00ff88; color:#000; border:none; }
-button:hover { background:#00dd88; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imidio Mining - Plataforma Oficial</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #0d0d0d;
+            color: #fff;
+            text-align: center;
+        }
+
+        header {
+            background: #111;
+            padding: 20px;
+            border-bottom: 2px solid #00ff99;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .container {
+            padding: 30px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .card {
+            background: #1a1a1a;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border: 1px solid #00ff99;
+        }
+
+        .card h2 {
+            color: #00ff99;
+            margin: 10px 0;
+        }
+
+        .btn {
+            background: #00ff99;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            background: #00dd88;
+        }
+
+        footer {
+            padding: 20px;
+            margin-top: 40px;
+            background: #111;
+            border-top: 2px solid #00ff99;
+            color: #ccc;
+        }
+    </style>
 </head>
 <body>
 
-<h1>🚀 Imidio Mining</h1>
-<p>Plataforma de mineração digital simulada</p>
+<header>
+    <h1>🚀 Imidio Mining</h1>
+    <p>Plataforma de mineração digital com planos e pagamentos integrados</p>
+</header>
 
-<h2>Cadastro</h2>
-<input id="name" placeholder="Nome" /><br/>
-<input id="email" placeholder="Email" /><br/>
-<input id="password" placeholder="Senha" type="password" /><br/>
-<button onclick="register()">Cadastrar</button>
+<div class="container">
 
-<h2>Login</h2>
-<input id="loginEmail" placeholder="Email" /><br/>
-<input id="loginPassword" placeholder="Senha" type="password" /><br/>
-<button onclick="login()">Entrar</button>
+    <div class="card">
+        <h2>Cadastro</h2>
+        <input type="text" id="nome" placeholder="Nome completo"><br><br>
+        <input type="email" id="email" placeholder="E-mail"><br><br>
+        <input type="password" id="senha" placeholder="Senha"><br><br>
+        <button class="btn" onclick="cadastrar()">Cadastrar</button>
+    </div>
 
-<h2>Plano</h2>
-<select id="planSelect">
-<option value="basic">Basic - 5$/dia</option>
-<option value="pro">Pro - 10$/dia</option>
-<option value="elite">Elite - 20$/dia</option>
-</select>
-<button onclick="choosePlan()">Ativar Plano</button>
+    <div class="card">
+        <h2>Login</h2>
+        <input type="email" id="loginEmail" placeholder="E-mail"><br><br>
+        <input type="password" id="loginSenha" placeholder="Senha"><br><br>
+        <button class="btn" onclick="login()">Entrar</button>
+    </div>
 
-<h2>Mineração Simulada</h2>
-<button onclick="mine()">Minerar</button>
-<p id="balance">Saldo: 0</p>
+    <div class="card">
+        <h2>Planos de Mineração</h2>
+        <div>
+            <button class="btn" onclick="ativarPlano(15)">Basic - $15/dia</button>
+            <button class="btn" onclick="ativarPlano(50)">Standard - $50/dia</button>
+            <button class="btn" onclick="ativarPlano(100)">Pro - $100/dia</button>
+        </div>
+        <div>
+            <button class="btn" onclick="ativarPlano(280)">Ultra - $280/dia</button>
+            <button class="btn" onclick="ativarPlano(500)">VIP - $500/dia</button>
+            <button class="btn" onclick="ativarPlano(1000)">Master - $1000/dia</button>
+        </div>
+        <div>
+            <button class="btn" onclick="ativarPlano(2000)">Elite - $2000/dia</button>
+            <button class="btn" onclick="ativarPlano(5000)">Platinum - $5000/dia</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Métodos de Pagamento</h2>
+        <button class="btn" onclick="pagamento('PayPal')">PayPal</button>
+        <button class="btn" onclick="pagamento('Cripto')">Criptomoedas</button>
+        <button class="btn" onclick="pagamento('M-Pesa')">M-Pesa</button>
+        <button class="btn" onclick="pagamento('Emola')">Emola</button>
+    </div>
+
+</div>
+
+<footer>
+    © 2025 Imidio Mining – Todos os direitos reservados.
+</footer>
 
 <script>
-let currentUser = null;
+    function cadastrar() {
+        const nome = document.getElementById("nome").value;
+        const email = document.getElementById("email").value;
+        const senha = document.getElementById("senha").value;
+        if(nome && email && senha) {
+            alert(`Cadastro enviado: ${nome} (${email})`);
+        } else {
+            alert("Preencha todos os campos!");
+        }
+    }
 
-async function register() {
-  const name = document.getElementById('name').value;
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
+    function login() {
+        const email = document.getElementById("loginEmail").value;
+        const senha = document.getElementById("loginSenha").value;
+        if(email && senha) {
+            alert(`Login efetuado: ${email}`);
+        } else {
+            alert("Preencha e-mail e senha!");
+        }
+    }
 
-  const res = await fetch('/register', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({name,email,password})
-  });
-  const data = await res.json();
-  alert(data.message);
-}
+    function ativarPlano(valor) {
+        alert(`Plano ativado: $${valor}/dia`);
+    }
 
-async function login() {
-  const email = document.getElementById('loginEmail').value;
-  const password = document.getElementById('loginPassword').value;
-
-  const res = await fetch('/login', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({email,password})
-  });
-  const data = await res.json();
-  alert(data.message);
-  if(data.user) currentUser = data.user;
-  document.getElementById('balance').innerText = 'Saldo: ' + (currentUser ? currentUser.balance : 0);
-}
-
-async function choosePlan() {
-  if(!currentUser) { alert('Faça login primeiro'); return; }
-  const plan = document.getElementById('planSelect').value;
-  const res = await fetch('/plan', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({email: currentUser.email, plan})
-  });
-  const data = await res.json();
-  alert(data.message);
-  currentUser = data.user;
-}
-
-async function mine() {
-  if(!currentUser) { alert('Faça login primeiro'); return; }
-  const res = await fetch('/mine', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({email: currentUser.email})
-  });
-  const data = await res.json();
-  alert(data.message);
-  currentUser.balance = data.balance;
-  document.getElementById('balance').innerText = 'Saldo: ' + currentUser.balance;
-}
+    function pagamento(metodo) {
+        alert(`Pagamento selecionado: ${metodo}`);
+    }
 </script>
+
 </body>
-</html>
+  </html>
