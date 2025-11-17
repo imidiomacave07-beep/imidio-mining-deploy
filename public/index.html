@@ -1,177 +1,34 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Imidio Mining - Plataforma Oficial</title>
-
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background: #0d0d0d;
-            color: white;
-        }
-
-        header {
-            background: #111;
-            padding: 20px;
-            text-align: center;
-            font-size: 28px;
-            font-weight: bold;
-            border-bottom: 2px solid #00ff99;
-        }
-
-        .container {
-            text-align: center;
-            padding: 50px;
-        }
-
-        .title {
-            font-size: 34px;
-            margin-top: 20px;
-        }
-
-        .subtitle {
-            font-size: 20px;
-            color: #00ff99;
-            margin-bottom: 40px;
-        }
-
-        .btn {
-            background: #00ff99;
-            border: none;
-            padding: 14px 30px;
-            font-size: 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            color: black;
-            font-weight: bold;
-            margin: 5px;
-        }
-
-        .btn:hover {
-            background: #00dd88;
-        }
-
-        /* MODAL ESTILOS */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 10;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.7);
-        }
-
-        .modal-content {
-            background-color: #111;
-            margin: 10% auto;
-            padding: 30px;
-            border: 1px solid #00ff99;
-            width: 90%;
-            max-width: 400px;
-            border-radius: 10px;
-            color: white;
-            text-align: left;
-        }
-
-        .modal-content h2 {
-            margin-top: 0;
-            color: #00ff99;
-        }
-
-        .modal-content input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #00ff99;
-            background: #222;
-            color: white;
-        }
-
-        .modal-content button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-        }
-
-        .close {
-            color: #00ff99;
-            float: right;
-            font-size: 24px;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-
-<header>✨ Imidio Mining</header>
-
 <div class="container">
-    <div class="title">Bem-vindo à Imidio Mining 🚀</div>
-    <div class="subtitle">A sua plataforma de mineração digital moderna e segura.</div>
+    <div class="title">Bem-vindo à Imidio Mining</div>
+    <div class="subtitle">A sua plataforma de mineração digital</div>
 
-    <button class="btn" onclick="openModal('signupModal')">Criar Conta</button>
-    <button class="btn" onclick="openModal('loginModal')">Entrar</button>
-</div>
-
-<!-- MODAL DE CADASTRO -->
-<div id="signupModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('signupModal')">&times;</span>
-        <h2>Criar Conta</h2>
-        <input type="text" placeholder="Nome Completo" id="signupName">
-        <input type="email" placeholder="Email" id="signupEmail">
-        <input type="password" placeholder="Senha" id="signupPassword">
-        <button onclick="signup()">Cadastrar</button>
-    </div>
-</div>
-
-<!-- MODAL DE LOGIN -->
-<div id="loginModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('loginModal')">&times;</span>
-        <h2>Entrar</h2>
-        <input type="email" placeholder="Email" id="loginEmail">
-        <input type="password" placeholder="Senha" id="loginPassword">
-        <button onclick="login()">Entrar</button>
-    </div>
+    <form id="cadastroForm">
+        <input type="text" name="nome" placeholder="Nome" required /><br><br>
+        <input type="email" name="email" placeholder="Email" required /><br><br>
+        <input type="password" name="senha" placeholder="Senha" required /><br><br>
+        <button type="submit" class="btn">Criar Conta</button>
+    </form>
 </div>
 
 <script>
-    function openModal(modalId) {
-        document.getElementById(modalId).style.display = 'block';
-    }
+    const form = document.getElementById("cadastroForm");
 
-    function closeModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
-    }
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = {
+            nome: form.nome.value,
+            email: form.email.value,
+            senha: form.senha.value
+        };
 
-    // Fechar modal clicando fora do conteúdo
-    window.onclick = function(event) {
-        const signup = document.getElementById('signupModal');
-        const login = document.getElementById('loginModal');
-        if(event.target === signup) signup.style.display = 'none';
-        if(event.target === login) login.style.display = 'none';
-    }
+        const res = await fetch("/api/cadastro", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        });
 
-    // Funções temporárias de frontend
-    function signup() {
-        alert('Cadastro enviado! Conectar ao backend para salvar dados.');
-        closeModal('signupModal');
-    }
-
-    function login() {
-        alert('Login enviado! Conectar ao backend para autenticar.');
-        closeModal('loginModal');
-    }
+        const data = await res.json();
+        alert(data.message);
+        form.reset();
+    });
 </script>
-
-</body>
-</html>
