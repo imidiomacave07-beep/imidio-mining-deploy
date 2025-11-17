@@ -1,0 +1,19 @@
+{
+  "users": [],
+  "plans": [
+    { "id": 1, "name": "Basic", "price": 15, "profitPerDay": 1 },
+    { "id": 2, "name": "Starter", "price": 50, "profitPerDay": 4 },
+    { "id": 3, "name": "Pro", "price": 100, "profitPerDay": 10 },
+    { "id": 4, "name": "Turbo", "price": 280, "profitPerDay": 35 },
+    { "id": 5, "name": "Max", "price": 500, "profitPerDay": 70 },
+    { "id": 6, "name": "Ultra", "price": 1000, "profitPerDay": 150 },
+    { "id": 7, "name": "Mega", "price": 2000, "profitPerDay": 350 },
+    { "id": 8, "name": "VIP", "price": 5000, "profitPerDay": 1000 }
+  ],
+  "payments": [
+    "PayPal",
+    "Criptomoedas",
+    "M-Pesa",
+    "Emola"
+  ]
+}
