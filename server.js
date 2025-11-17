@@ -1,13 +1,16 @@
-const express = require("express"); // importa o framework Express
-const app = express();               // cria a aplicação Express
-const PORT = process.env.PORT || 10000; // define a porta (padrão 10000)
+const express = require("express");
+const app = express();
+const PORT = process.env.PORT || 10000;
 
-// Rota raiz: quando alguém acessa "/", mostra mensagem
+// Servir arquivos estáticos da pasta "public"
+app.use(express.static("public"));
+
+// Rota principal
 app.get("/", (req, res) => {
-  res.send("<h1>🚀 Imidio Mining Server está online!</h1><p>Bem-vindo à sua plataforma.</p>");
+  res.sendFile(__dirname + "/public/index.html");
 });
 
-// Inicia o servidor e mostra no console que está rodando
+// Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`🚀 Imidio Mining Server está online na porta ${PORT}`);
 });
