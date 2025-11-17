@@ -1,202 +1,175 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Imidio Mining - Plataforma Oficial</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Imidio Mining - Plataforma Oficial</title>
 
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        background: #0a0f24;
-        color: #fff;
-    }
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #0d0d0d;
+            color: white;
+        }
 
-    header {
-        background: #111a3a;
-        padding: 20px;
-        text-align: center;
-        border-bottom: 3px solid #00d1ff;
-    }
+        header {
+            background: #111;
+            padding: 20px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            border-bottom: 2px solid #00ff99;
+        }
 
-    header h1 {
-        margin: 0;
-        font-size: 36px;
-        animation: glow 2s infinite alternate;
-    }
+        .container {
+            text-align: center;
+            padding: 50px;
+        }
 
-    header p {
-        margin: 5px 0 0;
-        font-size: 16px;
-        opacity: 0.8;
-    }
+        .title {
+            font-size: 34px;
+            margin-top: 20px;
+        }
 
-    @keyframes glow {
-        from { text-shadow: 0 0 5px #00ff99; }
-        to { text-shadow: 0 0 20px #00ff99; }
-    }
+        .subtitle {
+            font-size: 20px;
+            color: #00ff99;
+            margin-bottom: 40px;
+        }
 
-    .container {
-        padding: 40px;
-        max-width: 1000px;
-        margin: auto;
-        text-align: center;
-    }
+        .btn {
+            background: #00ff99;
+            border: none;
+            padding: 14px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: black;
+            font-weight: bold;
+            margin: 5px;
+        }
 
-    .btn {
-        background: #00ff99;
-        border: none;
-        padding: 14px 30px;
-        font-size: 18px;
-        border-radius: 8px;
-        cursor: pointer;
-        color: black;
-        font-weight: bold;
-        margin: 10px;
-        transition: 0.3s;
-    }
+        .btn:hover {
+            background: #00dd88;
+        }
 
-    .btn:hover {
-        background: #00dd88;
-        transform: scale(1.05);
-    }
+        /* MODAL ESTILOS */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+        }
 
-    .btn:active {
-        background: #00bb66;
-        transform: scale(0.98);
-    }
+        .modal-content {
+            background-color: #111;
+            margin: 10% auto;
+            padding: 30px;
+            border: 1px solid #00ff99;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 10px;
+            color: white;
+            text-align: left;
+        }
 
-    /* Modal Styles */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.8);
-    }
+        .modal-content h2 {
+            margin-top: 0;
+            color: #00ff99;
+        }
 
-    .modal-content {
-        background-color: #111a3a;
-        margin: 10% auto;
-        padding: 30px;
-        border: 1px solid #00ff9950;
-        width: 90%;
-        max-width: 400px;
-        border-radius: 10px;
-        text-align: left;
-        color: #fff;
-        animation: fadeIn 0.5s;
-    }
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #00ff99;
+            background: #222;
+            color: white;
+        }
 
-    .close {
-        color: #00ff99;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-    }
+        .modal-content button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+        }
 
-    .close:hover {
-        color: #00dd88;
-    }
-
-    input[type="text"], input[type="email"], input[type="password"] {
-        width: 100%;
-        padding: 12px;
-        margin: 10px 0;
-        border-radius: 6px;
-        border: 1px solid #00ff9950;
-        background: #131b36;
-        color: #fff;
-    }
-
-    input[type="submit"] {
-        width: 100%;
-        padding: 12px;
-        background: #00ff99;
-        border: none;
-        color: black;
-        font-weight: bold;
-        border-radius: 8px;
-        cursor: pointer;
-    }
-
-    input[type="submit"]:hover {
-        background: #00dd88;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-20px);}
-        to { opacity: 1; transform: translateY(0);}
-    }
-</style>
+        .close {
+            color: #00ff99;
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
 </head>
-
 <body>
 
-<header>
-    <h1>✨ Imidio Mining</h1>
-    <p>Plataforma oficial de mineração digital</p>
-</header>
+<header>✨ Imidio Mining</header>
 
 <div class="container">
-    <h2>Bem-vindo à Imidio Mining 🚀</h2>
-    <p>A sua plataforma de mineração digital moderna e segura.</p>
+    <div class="title">Bem-vindo à Imidio Mining 🚀</div>
+    <div class="subtitle">A sua plataforma de mineração digital moderna e segura.</div>
 
-    <button class="btn" id="createAccountBtn">Criar Conta</button>
-    <button class="btn" id="loginBtn">Entrar</button>
+    <button class="btn" onclick="openModal('signupModal')">Criar Conta</button>
+    <button class="btn" onclick="openModal('loginModal')">Entrar</button>
 </div>
 
-<!-- Modal Criar Conta -->
-<div id="createAccountModal" class="modal">
+<!-- MODAL DE CADASTRO -->
+<div id="signupModal" class="modal">
     <div class="modal-content">
-        <span class="close" id="closeCreate">&times;</span>
+        <span class="close" onclick="closeModal('signupModal')">&times;</span>
         <h2>Criar Conta</h2>
-        <form>
-            <input type="text" placeholder="Nome completo" required>
-            <input type="email" placeholder="Email" required>
-            <input type="password" placeholder="Senha" required>
-            <input type="submit" value="Cadastrar">
-        </form>
+        <input type="text" placeholder="Nome Completo" id="signupName">
+        <input type="email" placeholder="Email" id="signupEmail">
+        <input type="password" placeholder="Senha" id="signupPassword">
+        <button onclick="signup()">Cadastrar</button>
     </div>
 </div>
 
-<!-- Modal Login -->
+<!-- MODAL DE LOGIN -->
 <div id="loginModal" class="modal">
     <div class="modal-content">
-        <span class="close" id="closeLogin">&times;</span>
+        <span class="close" onclick="closeModal('loginModal')">&times;</span>
         <h2>Entrar</h2>
-        <form>
-            <input type="email" placeholder="Email" required>
-            <input type="password" placeholder="Senha" required>
-            <input type="submit" value="Entrar">
-        </form>
+        <input type="email" placeholder="Email" id="loginEmail">
+        <input type="password" placeholder="Senha" id="loginPassword">
+        <button onclick="login()">Entrar</button>
     </div>
 </div>
 
 <script>
-    // Modal control
-    const createBtn = document.getElementById("createAccountBtn");
-    const loginBtn = document.getElementById("loginBtn");
-    const createModal = document.getElementById("createAccountModal");
-    const loginModal = document.getElementById("loginModal");
-    const closeCreate = document.getElementById("closeCreate");
-    const closeLogin = document.getElementById("closeLogin");
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = 'block';
+    }
 
-    createBtn.onclick = () => createModal.style.display = "block";
-    loginBtn.onclick = () => loginModal.style.display = "block";
-    closeCreate.onclick = () => createModal.style.display = "none";
-    closeLogin.onclick = () => loginModal.style.display = "none";
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
 
-    window.onclick = (event) => {
-        if (event.target == createModal) createModal.style.display = "none";
-        if (event.target == loginModal) loginModal.style.display = "none";
+    // Fechar modal clicando fora do conteúdo
+    window.onclick = function(event) {
+        const signup = document.getElementById('signupModal');
+        const login = document.getElementById('loginModal');
+        if(event.target === signup) signup.style.display = 'none';
+        if(event.target === login) login.style.display = 'none';
+    }
+
+    // Funções temporárias de frontend
+    function signup() {
+        alert('Cadastro enviado! Conectar ao backend para salvar dados.');
+        closeModal('signupModal');
+    }
+
+    function login() {
+        alert('Login enviado! Conectar ao backend para autenticar.');
+        closeModal('loginModal');
     }
 </script>
 
