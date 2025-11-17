@@ -1,159 +1,58 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Imidio Mining - Plataforma Oficial</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
             background: #0d0d0d;
-            color: #fff;
-            text-align: center;
+            color: white;
+            font-family: Arial, sans-serif;
         }
-
         header {
             background: #111;
             padding: 20px;
+            text-align: center;
+            font-size: 26px;
+            font-weight: bold;
             border-bottom: 2px solid #00ff99;
         }
-
-        header h1 {
-            margin: 0;
-            font-size: 28px;
-        }
-
         .container {
-            padding: 30px;
-            max-width: 900px;
-            margin: auto;
+            text-align: center;
+            padding: 40px;
         }
-
-        .card {
-            background: #1a1a1a;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 10px;
-            border: 1px solid #00ff99;
+        .title {
+            font-size: 34px;
+            margin-top: 20px;
         }
-
-        .card h2 {
+        .subtitle {
+            font-size: 20px;
             color: #00ff99;
-            margin: 10px 0;
+            margin-bottom: 40px;
         }
-
         .btn {
             background: #00ff99;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
+            padding: 14px 30px;
+            font-size: 18px;
+            border-radius: 8px;
             cursor: pointer;
+            color: black;
             font-weight: bold;
-            margin: 5px;
-            transition: 0.2s;
         }
-
-        .btn:hover {
-            background: #00dd88;
-        }
-
-        footer {
-            padding: 20px;
-            margin-top: 40px;
-            background: #111;
-            border-top: 2px solid #00ff99;
-            color: #ccc;
-        }
+        .btn:hover { background: #00dd88; }
     </style>
 </head>
 <body>
-
-<header>
-    <h1>🚀 Imidio Mining</h1>
-    <p>Plataforma de mineração digital com planos e pagamentos integrados</p>
-</header>
-
-<div class="container">
-
-    <div class="card">
-        <h2>Cadastro</h2>
-        <input type="text" id="nome" placeholder="Nome completo"><br><br>
-        <input type="email" id="email" placeholder="E-mail"><br><br>
-        <input type="password" id="senha" placeholder="Senha"><br><br>
-        <button class="btn" onclick="cadastrar()">Cadastrar</button>
+    <header>✨ Imidio Mining</header>
+    <div class="container">
+        <div class="title">Bem-vindo à Imidio Mining</div>
+        <div class="subtitle">A sua plataforma de mineração digital</div>
+        <button class="btn">Criar Conta</button>
+        <button class="btn" style="margin-left: 10px;">Entrar</button>
     </div>
-
-    <div class="card">
-        <h2>Login</h2>
-        <input type="email" id="loginEmail" placeholder="E-mail"><br><br>
-        <input type="password" id="loginSenha" placeholder="Senha"><br><br>
-        <button class="btn" onclick="login()">Entrar</button>
-    </div>
-
-    <div class="card">
-        <h2>Planos de Mineração</h2>
-        <div>
-            <button class="btn" onclick="ativarPlano(15)">Basic - $15/dia</button>
-            <button class="btn" onclick="ativarPlano(50)">Standard - $50/dia</button>
-            <button class="btn" onclick="ativarPlano(100)">Pro - $100/dia</button>
-        </div>
-        <div>
-            <button class="btn" onclick="ativarPlano(280)">Ultra - $280/dia</button>
-            <button class="btn" onclick="ativarPlano(500)">VIP - $500/dia</button>
-            <button class="btn" onclick="ativarPlano(1000)">Master - $1000/dia</button>
-        </div>
-        <div>
-            <button class="btn" onclick="ativarPlano(2000)">Elite - $2000/dia</button>
-            <button class="btn" onclick="ativarPlano(5000)">Platinum - $5000/dia</button>
-        </div>
-    </div>
-
-    <div class="card">
-        <h2>Métodos de Pagamento</h2>
-        <button class="btn" onclick="pagamento('PayPal')">PayPal</button>
-        <button class="btn" onclick="pagamento('Cripto')">Criptomoedas</button>
-        <button class="btn" onclick="pagamento('M-Pesa')">M-Pesa</button>
-        <button class="btn" onclick="pagamento('Emola')">Emola</button>
-    </div>
-
-</div>
-
-<footer>
-    © 2025 Imidio Mining – Todos os direitos reservados.
-</footer>
-
-<script>
-    function cadastrar() {
-        const nome = document.getElementById("nome").value;
-        const email = document.getElementById("email").value;
-        const senha = document.getElementById("senha").value;
-        if(nome && email && senha) {
-            alert(`Cadastro enviado: ${nome} (${email})`);
-        } else {
-            alert("Preencha todos os campos!");
-        }
-    }
-
-    function login() {
-        const email = document.getElementById("loginEmail").value;
-        const senha = document.getElementById("loginSenha").value;
-        if(email && senha) {
-            alert(`Login efetuado: ${email}`);
-        } else {
-            alert("Preencha e-mail e senha!");
-        }
-    }
-
-    function ativarPlano(valor) {
-        alert(`Plano ativado: $${valor}/dia`);
-    }
-
-    function pagamento(metodo) {
-        alert(`Pagamento selecionado: ${metodo}`);
-    }
-</script>
-
 </body>
-  </html>
+</html>
