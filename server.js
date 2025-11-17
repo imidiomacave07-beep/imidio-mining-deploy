@@ -1,103 +1,92 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const fs = require('fs');
-const { v4: uuidv4 } = require('uuid');
-
+const fs = require("fs");
+const express = require("express");
+const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// Configurações
 app.use(cors());
-app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.json());
 
-// Banco de dados simples (arquivo JSON)
-const dbPath = './data/users.json';
-if (!fs.existsSync('./data')) fs.mkdirSync('./data');
-if (!fs.existsSync(dbPath)) fs.writeFileSync(dbPath, JSON.stringify([]));
+// Caminho para o database
+const dbPath = "./database/db.json";
 
-// Função para ler usuários
-function getUsers() {
-  return JSON.parse(fs.readFileSync(dbPath));
+// Função para ler o database
+function readDB() {
+  const data = fs.readFileSync(dbPath);
+  return JSON.parse(data);
 }
 
-// Função para salvar usuários
-function saveUsers(users) {
-  fs.writeFileSync(dbPath, JSON.stringify(users, null, 2));
+// Função para salvar no database
+function saveDB(data) {
+  fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
 }
 
-// Rota cadastro
-app.post('/register', (req, res) => {
+// =====================
+// Endpoints
+// =====================
+
+// Rota inicial
+app.get("/", (req, res) => {
+  res.send("<h1>🚀 Imidio Mining Server está online!</h1><p>Bem-vindo à sua plataforma.</p>");
+});
+
+// Listar planos
+app.get("/plans", (req, res) => {
+  const db = readDB();
+  res.json(db.plans);
+});
+
+// Listar métodos de pagamento
+app.get("/payments", (req, res) => {
+  const db = readDB();
+  res.json(db.payments);
+});
+
+// Registrar usuário
+app.post("/register", (req, res) => {
   const { name, email, password } = req.body;
-  const users = getUsers();
-
-  if (users.find(u => u.email === email)) {
-    return res.status(400).json({ message: 'Email já registrado' });
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: "Preencha todos os campos" });
   }
 
-  const newUser = {
-    id: uuidv4(),
-    name,
-    email,
-    password,
-    balance: 0,
-    plan: null
-  };
+  const db = readDB();
+  const userExists = db.users.find(u => u.email === email);
+  if (userExists) {
+    return res.status(400).json({ error: "Usuário já cadastrado" });
+  }
 
-  users.push(newUser);
-  saveUsers(users);
+  const newUser = { id: Date.now(), name, email, password, plan: null, balance: 0 };
+  db.users.push(newUser);
+  saveDB(db);
 
-  res.json({ message: 'Cadastro realizado com sucesso', user: newUser });
+  res.json({ message: "Cadastro realizado com sucesso", user: newUser });
 });
 
-// Rota login
-app.post('/login', (req, res) => {
-  const { email, password } = req.body;
-  const users = getUsers();
-
-  const user = users.find(u => u.email === email && u.password === password);
-  if (!user) return res.status(400).json({ message: 'Email ou senha inválidos' });
-
-  res.json({ message: 'Login realizado com sucesso', user });
+// Consultar usuários
+app.get("/users", (req, res) => {
+  const db = readDB();
+  res.json(db.users);
 });
 
-// Rota para escolher plano
-app.post('/plan', (req, res) => {
-  const { email, plan } = req.body;
-  const users = getUsers();
-  const user = users.find(u => u.email === email);
-  if (!user) return res.status(400).json({ message: 'Usuário não encontrado' });
+// Ativar plano para usuário
+app.post("/activate-plan", (req, res) => {
+  const { email, planId } = req.body;
+  const db = readDB();
 
-  // Planos simulados
-  const plans = {
-    basic: 5,
-    pro: 10,
-    elite: 20
-  };
+  const user = db.users.find(u => u.email === email);
+  const plan = db.plans.find(p => p.id === planId);
 
-  if (!plans[plan]) return res.status(400).json({ message: 'Plano inválido' });
+  if (!user || !plan) return res.status(400).json({ error: "Usuário ou plano inválido" });
 
   user.plan = plan;
-  saveUsers(users);
+  saveDB(db);
 
-  res.json({ message: `Plano ${plan} ativado com sucesso`, user });
+  res.json({ message: "Plano ativado com sucesso", user });
 });
 
-// Rota para minerar/recompensa simulada
-app.post('/mine', (req, res) => {
-  const { email } = req.body;
-  const users = getUsers();
-  const user = users.find(u => u.email === email);
-  if (!user) return res.status(400).json({ message: 'Usuário não encontrado' });
-  if (!user.plan) return res.status(400).json({ message: 'Nenhum plano ativo' });
-
-  // Simulação de ganho diário
-  const rewards = { basic: 1, pro: 3, elite: 7 };
-  user.balance += rewards[user.plan];
-  saveUsers(users);
-
-  res.json({ message: 'Mineração simulada realizada', balance: user.balance });
+// =====================
+// Start do servidor
+// =====================
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
-
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
