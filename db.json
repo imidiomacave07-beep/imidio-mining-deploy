@@ -1,0 +1,25 @@
+{
+  "users": [],
+  "plans": [
+    {
+      "id": 1,
+      "name": "Plano Básico",
+      "price": 10,
+      "dailyProfit": 0.10
+    },
+    {
+      "id": 2,
+      "name": "Plano Intermédio",
+      "price": 50,
+      "dailyProfit": 0.80
+    },
+    {
+      "id": 3,
+      "name": "Plano Avançado",
+      "price": 100,
+      "dailyProfit": 2.00
+    }
+  ],
+  "transactions": [],
+  "withdrawals": []
+}
