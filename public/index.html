@@ -8,49 +8,160 @@
         body {
             margin: 0;
             padding: 0;
-            background: #0d0d0d;
-            color: white;
             font-family: Arial, sans-serif;
+            background: #0a0f24;
+            color: #fff;
+        }
+
+        header {
+            background: #111a3a;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #00d1ff;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        header p {
+            margin: 5px 0 0;
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        .container {
+            padding: 40px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section h2 {
+            color: #00d1ff;
+            margin-bottom: 20px;
+        }
+
+        .plans {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: #131b36;
+            padding: 25px;
+            margin: 15px;
+            border-radius: 10px;
+            flex: 1 1 250px;
+            border: 1px solid #00d1ff50;
             text-align: center;
         }
-        header {
-            font-size: 36px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .subtitle {
-            font-size: 20px;
+
+        .card h3 {
             color: #00ff99;
-            margin-bottom: 40px;
         }
+
+        .card p {
+            margin: 10px 0;
+        }
+
         .btn {
             background: #00ff99;
             border: none;
-            padding: 14px 30px;
-            font-size: 18px;
+            padding: 12px 25px;
             border-radius: 8px;
             cursor: pointer;
             color: black;
             font-weight: bold;
-            margin: 0 10px;
-            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
         }
+
         .btn:hover {
             background: #00dd88;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: #111a3a;
+            border-top: 2px solid #00d1ff50;
+            color: #ccc;
         }
     </style>
 </head>
 <body>
-    <header>✨ Imidio Mining</header>
-    <div class="subtitle">A sua plataforma de mineração digital</div>
-    <div>
-        <button class="btn">Criar Conta</button>
-        <button class="btn">Entrar</button>
+
+    <header>
+        <h1>✨ Imidio Mining</h1>
+        <p>Plataforma oficial de mineração digital</p>
+    </header>
+
+    <div class="container">
+
+        <div class="section">
+            <h2>Bem-vindo à Imidio Mining 🚀</h2>
+            <p>Segurança, transparência e rendimento sustentável para todos os utilizadores.</p>
+        </div>
+
+        <div class="section">
+            <h2>Planos de Mineração</h2>
+            <div class="plans">
+                <div class="card">
+                    <h3>Básico</h3>
+                    <p>💰 Investimento inicial: $10</p>
+                    <p>📈 Ganhos automáticos diários</p>
+                    <a href="#" class="btn">Escolher Plano</a>
+                </div>
+                <div class="card">
+                    <h3>Intermediário</h3>
+                    <p>💰 Investimento inicial: $50</p>
+                    <p>📈 Ganhos automáticos diários + bônus</p>
+                    <a href="#" class="btn">Escolher Plano</a>
+                </div>
+                <div class="card">
+                    <h3>Avançado</h3>
+                    <p>💰 Investimento inicial: $100</p>
+                    <p>📈 Ganhos automáticos diários + cashback</p>
+                    <a href="#" class="btn">Escolher Plano</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Vantagens da Imidio Mining ⚡</h2>
+            <div class="plans">
+                <div class="card">
+                    <h3>Automatização</h3>
+                    <p>Mineração 24/7 sem esforço.</p>
+                </div>
+                <div class="card">
+                    <h3>Taxas Baixas</h3>
+                    <p>Transparência total nos custos e retiradas.</p>
+                </div>
+                <div class="card">
+                    <h3>Segurança</h3>
+                    <p>Servidores protegidos e escaláveis.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" style="text-align:center;">
+            <a href="#" class="btn">Criar Conta</a>
+            <a href="#" class="btn">Entrar</a>
+        </div>
+
     </div>
+
+    <footer>
+        © 2025 Imidio Mining – Todos os direitos reservados.
+    </footer>
+
 </body>
-</html>
+            </html>
