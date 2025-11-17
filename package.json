@@ -1,7 +1,7 @@
 {
   "name": "imidio-mining",
   "version": "1.0.0",
-  "description": "Servidor simples para Imidio Mining",
+  "description": "Backend para Imidio Mining",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
