@@ -1,21 +1,18 @@
 import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
 
 dotenv.config();
-
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// Configurar pastas públicas
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, "public")));
+app.use(cors());
+app.use(express.json());
+app.use(express.static("public"));
 
-// Rota principal
+// Rota inicial
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.send("<h1>🚀 Bem-vindo à Imidio Mining!</h1>");
 });
 
 // Iniciar servidor
