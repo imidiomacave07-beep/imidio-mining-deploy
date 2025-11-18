@@ -2,86 +2,12 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🚀 Imidio Mining</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; }
-    h1 { color: #333; }
-    input, button { padding: 8px; margin: 5px 0; }
-    button { cursor: pointer; }
-    .planos, .usuarios { margin-top: 20px; padding: 10px; background: #fff; border-radius: 8px; }
-    .planos div, .usuarios div { margin-bottom: 8px; }
-  </style>
+  <title>Imidio Mining</title>
+  <script defer src="index.js"></script>
 </head>
 <body>
-
-  <h1>🚀 Imidio Mining</h1>
-
-  <section class="usuarios-section">
-    <h2>Criar Usuário</h2>
-    <input type="text" id="username" placeholder="Nome do usuário">
-    <button onclick="criarUsuario()">Criar</button>
-    <div class="usuarios"></div>
-  </section>
-
-  <section class="planos-section">
-    <h2>Planos Disponíveis</h2>
-    <button onclick="carregarPlanos()">Iniciar Planos</button>
-    <div class="planos"></div>
-  </section>
-
-  <script>
-    const apiBase = '/data'; // Endpoint do backend
-
-    async function carregarUsuarios() {
-      const res = await fetch(apiBase);
-      const data = await res.json();
-      const usuariosDiv = document.querySelector('.usuarios');
-      usuariosDiv.innerHTML = '';
-      data.usuarios.forEach(u => {
-        const div = document.createElement('div');
-        div.textContent = `Usuário: ${u.nome}`;
-        usuariosDiv.appendChild(div);
-      });
-    }
-
-    async function criarUsuario() {
-      const nome = document.getElementById('username').value.trim();
-      if (!nome) return alert("Digite um nome!");
-
-      // Pegar usuários atuais
-      const res = await fetch(apiBase);
-      const data = await res.json();
-
-      // Adicionar novo usuário
-      data.usuarios.push({ nome });
-
-      // Salvar no backend
-      await fetch(apiBase, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-
-      document.getElementById('username').value = '';
-      carregarUsuarios();
-    }
-
-    async function carregarPlanos() {
-      const res = await fetch(apiBase);
-      const data = await res.json();
-      const planosDiv = document.querySelector('.planos');
-      planosDiv.innerHTML = '';
-      data.planos.forEach((p, i) => {
-        const div = document.createElement('div');
-        div.textContent = `${i + 1}. Plano: ${p.nome} - Preço: ${p.preco}`;
-        planosDiv.appendChild(div);
-      });
-    }
-
-    // Carregar usuários automaticamente ao abrir
-    carregarUsuarios();
-  </script>
-
+  <h1>🚀 Bem-vindo à sua plataforma!</h1>
+  <button id="startBtn">Iniciar Mineração</button>
+  <p id="statusMsg"></p>
 </body>
 </html>
