@@ -1,10 +1,14 @@
-// Endpoint para atualizar db.json
-app.post("/data", (req, res) => {
-  try {
-    fs.writeFileSync(dbPath, JSON.stringify(req.body, null, 2));
-    res.json({ message: "Dados atualizados com sucesso!" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Erro ao atualizar db.json" });
+{
+  "name": "imidio-mining-deploy",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3"
   }
-});
+  }
