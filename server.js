@@ -11,101 +11,91 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Porta do Render ou fallback local
 const PORT = process.env.PORT || 10000;
-
-// Caminho absoluto para o db.json dentro da pasta /database
 const dbPath = path.resolve("./database/db.json");
 
-// Função auxiliar para ler e criar db.json se não existir
-function getDatabase() {
+// Função para ler o banco de dados
+function readDB() {
   if (!fs.existsSync(dbPath)) {
-    fs.writeFileSync(dbPath, JSON.stringify({ planos: [], usuarios: [] }, null, 2));
+    fs.writeFileSync(dbPath, JSON.stringify({ usuarios: [], planos: [] }, null, 2));
   }
   const rawData = fs.readFileSync(dbPath, "utf-8");
   return JSON.parse(rawData);
 }
 
-// Função auxiliar para salvar db.json
-function saveDatabase(data) {
+// Função para salvar o banco de dados
+function saveDB(data) {
   fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
 }
+
+// Health check
+app.get("/healthz", (req, res) => res.send("OK"));
 
 // Rota raiz
 app.get("/", (req, res) => {
   res.send("🚀 Imidio Mining está online! Bem-vindo à sua plataforma de mineração digital.");
 });
 
-// Health check
-app.get("/healthz", (req, res) => res.send("OK"));
-
-// Retornar todo o conteúdo do banco
-app.get("/data", (req, res) => {
-  try {
-    const data = getDatabase();
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ error: "Erro ao ler db.json" });
-  }
-});
-
 // Listar usuários
 app.get("/usuarios", (req, res) => {
-  try {
-    const data = getDatabase();
-    res.json(data.usuarios);
-  } catch (err) {
-    res.status(500).json({ error: "Erro ao ler usuários" });
-  }
+  const db = readDB();
+  res.json(db.usuarios);
 });
 
-// Cadastrar novo usuário
+// Criar usuário
 app.post("/usuarios", (req, res) => {
-  try {
-    const data = getDatabase();
-    const novoUsuario = {
-      id: Date.now(),
-      nome: req.body.nome,
-      email: req.body.email,
-      saldo: 0
-    };
-    data.usuarios.push(novoUsuario);
-    saveDatabase(data);
-    res.json({ sucesso: true, usuario: novoUsuario });
-  } catch (err) {
-    res.status(500).json({ erro: "Erro ao cadastrar usuário" });
-  }
+  const { nome } = req.body;
+  if (!nome) return res.status(400).json({ error: "Nome é obrigatório" });
+
+  const db = readDB();
+  const id = db.usuarios.length + 1;
+  const novoUsuario = { id, nome, saldo: 0, planosComprados: [] };
+  db.usuarios.push(novoUsuario);
+  saveDB(db);
+
+  res.status(201).json(novoUsuario);
 });
 
 // Listar planos
 app.get("/planos", (req, res) => {
-  try {
-    const data = getDatabase();
-    res.json(data.planos);
-  } catch (err) {
-    res.status(500).json({ error: "Erro ao ler planos" });
-  }
+  const db = readDB();
+  res.json(db.planos);
 });
 
-// Cadastrar novo plano
-app.post("/planos", (req, res) => {
-  try {
-    const data = getDatabase();
-    const novoPlano = {
-      id: Date.now(),
-      nome: req.body.nome,
-      custo: req.body.custo,
-      retorno: req.body.retorno
-    };
-    data.planos.push(novoPlano);
-    saveDatabase(data);
-    res.json({ sucesso: true, plano: novoPlano });
-  } catch (err) {
-    res.status(500).json({ erro: "Erro ao cadastrar plano" });
+// Comprar plano
+app.post("/comprar-plano", (req, res) => {
+  const { usuarioId, planoId } = req.body;
+  if (!usuarioId || !planoId) return res.status(400).json({ error: "UsuarioId e PlanoId são obrigatórios" });
+
+  const db = readDB();
+  const usuario = db.usuarios.find(u => u.id === usuarioId);
+  const plano = db.planos.find(p => p.id === planoId);
+
+  if (!usuario) return res.status(404).json({ error: "Usuário não encontrado" });
+  if (!plano) return res.status(404).json({ error: "Plano não encontrado" });
+
+  usuario.planosComprados.push({ ...plano, compradoEm: new Date().toISOString() });
+  saveDB(db);
+
+  res.json({ message: `Plano "${plano.nome}" comprado com sucesso!`, usuario });
+});
+
+// Inicializar planos se não existirem
+app.get("/init-planos", (req, res) => {
+  const db = readDB();
+  if (db.planos.length === 0) {
+    db.planos = [
+      { id: 1, nome: "Plano Bronze", lucroDiario: 5, duracaoDias: 30 },
+      { id: 2, nome: "Plano Prata", lucroDiario: 10, duracaoDias: 30 },
+      { id: 3, nome: "Plano Ouro", lucroDiario: 20, duracaoDias: 30 }
+    ];
+    saveDB(db);
+    return res.json({ message: "Planos iniciais criados", planos: db.planos });
   }
+  res.json({ message: "Planos já existem", planos: db.planos });
 });
 
 // Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT} ou https://seu-servico.onrender.com`);
+  console.log(`Servidor rodando em http://localhost:${PORT} ou no Render em https://seu-servico.onrender.com`);
 });
