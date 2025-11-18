@@ -5,21 +5,40 @@
       "id": 1,
       "name": "Plano Básico",
       "price": 10,
-      "dailyProfit": 0.10
+      "dailyProfit": 0.5,
+      "durationDays": 30
     },
     {
       "id": 2,
-      "name": "Plano Intermédio",
+      "name": "Plano Intermediário",
       "price": 50,
-      "dailyProfit": 0.80
+      "dailyProfit": 3,
+      "durationDays": 30
     },
     {
       "id": 3,
       "name": "Plano Avançado",
       "price": 100,
-      "dailyProfit": 2.00
+      "dailyProfit": 7,
+      "durationDays": 30
     }
   ],
-  "transactions": [],
-  "withdrawals": []
+  "payments": [
+    {
+      "id": 1,
+      "method": "Paypal"
+    },
+    {
+      "id": 2,
+      "method": "Cartão de Crédito"
+    },
+    {
+      "id": 3,
+      "method": "Transferência Bancária"
+    },
+    {
+      "id": 4,
+      "method": "Crypto (BTC/ETH)"
+    }
+  ]
 }
