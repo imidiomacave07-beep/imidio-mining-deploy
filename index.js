@@ -1,17 +1,7 @@
-const express = require("express");
-const path = require("path");
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Servir arquivos estáticos
-app.use(express.static(path.join(__dirname, "public")));
-
-// Página inicial
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
-app.listen(PORT, () => {
-  console.log(`🚀 Imidio Mining server running on port ${PORT}`);
+document.getElementById("startBtn").addEventListener("click", function() {
+  const status = document.getElementById("statusMsg");
+  status.innerText = "⛏️ Mineração iniciada com sucesso...";
+  setTimeout(() => {
+    status.innerText = "💰 Ganhos atualizados com sucesso!";
+  }, 3000);
 });
