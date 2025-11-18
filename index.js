@@ -1,34 +1,30 @@
-// Mineração simulada
-document.getElementById("startBtn").addEventListener("click", () => {
-  const status = document.getElementById("statusMsg");
-  status.innerText = "⛏️ Mineração iniciada...";
-  setTimeout(() => {
-    status.innerText = "💰 Ganhos atualizados com sucesso!";
-  }, 3000);
+document.getElementById("startBtn").addEventListener("click", async function() {
+    const status = document.getElementById("statusMsg");
+    status.innerText = "⛏️ Mineração iniciada...";
+    
+    // Simulação de requisição ao backend
+    const response = await fetch("/api/start-mining");
+    const data = await response.json();
+    
+    status.innerText = data.message; // Ex: "💰 Ganhos atualizados com sucesso!"
 });
 
-// Pagamento M-Pesa
-document.getElementById("payMpesa").addEventListener("click", async () => {
-  const phone = prompt("Digite seu número M-Pesa:");
-  const amount = prompt("Digite o valor:");
-  const res = await fetch("/api/pay-mpesa", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ phone, amount }),
-  });
-  const data = await res.json();
-  alert(JSON.stringify(data));
+document.getElementById("mpesaBtn").addEventListener("click", async function() {
+    const status = document.getElementById("statusMsg");
+    status.innerText = "💳 Processando pagamento M-Pesa...";
+
+    const response = await fetch("/api/pay-mpesa");
+    const data = await response.json();
+
+    status.innerText = data.message;
 });
 
-// Pagamento Cripto
-document.getElementById("payCrypto").addEventListener("click", async () => {
-  const to = prompt("Digite o endereço da carteira:");
-  const amount = prompt("Digite o valor em ETH:");
-  const res = await fetch("/api/pay-crypto", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ to, amount }),
-  });
-  const data = await res.json();
-  alert(JSON.stringify(data));
+document.getElementById("cryptoBtn").addEventListener("click", async function() {
+    const status = document.getElementById("statusMsg");
+    status.innerText = "💳 Processando pagamento Cripto...";
+
+    const response = await fetch("/api/pay-crypto");
+    const data = await response.json();
+
+    status.innerText = data.message;
 });
