@@ -1,58 +1,67 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Imidio Mining - Plataforma Oficial</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #0d0d0d;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
-        header {
-            background: #111;
-            padding: 20px;
-            text-align: center;
-            font-size: 26px;
-            font-weight: bold;
-            border-bottom: 2px solid #00ff99;
-        }
-        .container {
-            text-align: center;
-            padding: 40px;
-        }
-        .title {
-            font-size: 34px;
-            margin-top: 20px;
-        }
-        .subtitle {
-            font-size: 20px;
-            color: #00ff99;
-            margin-bottom: 40px;
-        }
-        .btn {
-            background: #00ff99;
-            border: none;
-            padding: 14px 30px;
-            font-size: 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            color: black;
-            font-weight: bold;
-        }
-        .btn:hover { background: #00dd88; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Imidio Mining</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    input, button { margin: 5px; padding: 5px; }
+    .usuario, .plano { border: 1px solid #ccc; padding: 10px; margin: 5px 0; }
+  </style>
 </head>
 <body>
-    <header>✨ Imidio Mining</header>
-    <div class="container">
-        <div class="title">Bem-vindo à Imidio Mining</div>
-        <div class="subtitle">A sua plataforma de mineração digital</div>
-        <button class="btn">Criar Conta</button>
-        <button class="btn" style="margin-left: 10px;">Entrar</button>
-    </div>
+  <h1>🚀 Imidio Mining</h1>
+
+  <h2>Criar Usuário</h2>
+  <input type="text" id="nomeUsuario" placeholder="Nome do usuário">
+  <button onclick="criarUsuario()">Criar</button>
+  <div id="usuariosList"></div>
+
+  <h2>Planos Disponíveis</h2>
+  <button onclick="initPlanos()">Iniciar Planos</button>
+  <div id="planosList"></div>
+
+  <script>
+    async function fetchUsuarios() {
+      const res = await fetch("/usuarios");
+      const usuarios = await res.json();
+      const container = document.getElementById("usuariosList");
+      container.innerHTML = "";
+      usuarios.forEach(u => {
+        container.innerHTML += `<div class="usuario">ID: ${u.id} | Nome: ${u.nome} | Planos: ${u.planosComprados.length}</div>`;
+      });
+    }
+
+    async function fetchPlanos() {
+      const res = await fetch("/planos");
+      const planos = await res.json();
+      const container = document.getElementById("planosList");
+      container.innerHTML = "";
+      planos.forEach(p => {
+        container.innerHTML += `<div class="plano">ID: ${p.id} | ${p.nome} | Lucro diário: ${p.lucroDiario} | Duração: ${p.duracaoDias} dias</div>`;
+      });
+    }
+
+    async function criarUsuario() {
+      const nome = document.getElementById("nomeUsuario").value;
+      if (!nome) return alert("Informe o nome!");
+      await fetch("/usuarios", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ nome })
+      });
+      document.getElementById("nomeUsuario").value = "";
+      fetchUsuarios();
+    }
+
+    async function initPlanos() {
+      await fetch("/init-planos");
+      fetchPlanos();
+    }
+
+    // Carregar dados ao abrir
+    fetchUsuarios();
+    fetchPlanos();
+  </script>
 </body>
 </html>
