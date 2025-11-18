@@ -1,44 +1,8 @@
 {
-  "users": [],
-  "plans": [
-    {
-      "id": 1,
-      "name": "Plano Básico",
-      "price": 10,
-      "dailyProfit": 0.5,
-      "durationDays": 30
-    },
-    {
-      "id": 2,
-      "name": "Plano Intermediário",
-      "price": 50,
-      "dailyProfit": 3,
-      "durationDays": 30
-    },
-    {
-      "id": 3,
-      "name": "Plano Avançado",
-      "price": 100,
-      "dailyProfit": 7,
-      "durationDays": 30
-    }
-  ],
-  "payments": [
-    {
-      "id": 1,
-      "method": "Paypal"
-    },
-    {
-      "id": 2,
-      "method": "Cartão de Crédito"
-    },
-    {
-      "id": 3,
-      "method": "Transferência Bancária"
-    },
-    {
-      "id": 4,
-      "method": "Crypto (BTC/ETH)"
-    }
+  "usuarios": [],
+  "planos": [
+    { "nome": "Plano Básico", "preco": "10 USD" },
+    { "nome": "Plano Avançado", "preco": "25 USD" },
+    { "nome": "Plano Premium", "preco": "50 USD" }
   ]
 }
