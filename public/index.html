@@ -22,23 +22,38 @@
   <div id="planosList"></div>
 
   <script>
+    let usuarios = [];
+    let planos = [];
+
     async function fetchUsuarios() {
       const res = await fetch("/usuarios");
-      const usuarios = await res.json();
+      usuarios = await res.json();
       const container = document.getElementById("usuariosList");
       container.innerHTML = "";
       usuarios.forEach(u => {
-        container.innerHTML += `<div class="usuario">ID: ${u.id} | Nome: ${u.nome} | Planos: ${u.planosComprados.length}</div>`;
+        container.innerHTML += `
+          <div class="usuario">
+            ID: ${u.id} | Nome: ${u.nome} | Planos: ${u.planosComprados.length}
+          </div>`;
       });
     }
 
     async function fetchPlanos() {
       const res = await fetch("/planos");
-      const planos = await res.json();
+      planos = await res.json();
       const container = document.getElementById("planosList");
       container.innerHTML = "";
       planos.forEach(p => {
-        container.innerHTML += `<div class="plano">ID: ${p.id} | ${p.nome} | Lucro diário: ${p.lucroDiario} | Duração: ${p.duracaoDias} dias</div>`;
+        container.innerHTML += `
+          <div class="plano">
+            ID: ${p.id} | ${p.nome} | Lucro diário: ${p.lucroDiario} | Duração: ${p.duracaoDias} dias
+            <br>
+            Comprar para:
+            <select id="selectUser${p.id}">
+              ${usuarios.map(u => `<option value="${u.id}">${u.nome}</option>`).join('')}
+            </select>
+            <button onclick="comprarPlano(${p.id})">Comprar</button>
+          </div>`;
       });
     }
 
@@ -51,17 +66,30 @@
         body: JSON.stringify({ nome })
       });
       document.getElementById("nomeUsuario").value = "";
-      fetchUsuarios();
+      await fetchUsuarios();
+      fetchPlanos();
     }
 
     async function initPlanos() {
       await fetch("/init-planos");
-      fetchPlanos();
+      await fetchPlanos();
+    }
+
+    async function comprarPlano(planoId) {
+      const select = document.getElementById(`selectUser${planoId}`);
+      const usuarioId = parseInt(select.value);
+      const res = await fetch("/comprar-plano", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ usuarioId, planoId })
+      });
+      const data = await res.json();
+      alert(data.message);
+      await fetchUsuarios();
     }
 
     // Carregar dados ao abrir
-    fetchUsuarios();
-    fetchPlanos();
+    fetchUsuarios().then(fetchPlanos);
   </script>
 </body>
 </html>
