@@ -6,13 +6,24 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Servir arquivos estáticos da pasta public
 app.use(express.static(path.join(__dirname, "public")));
 
+// API de mineração (exemplo)
 app.get("/api/start-mining", (req, res) => {
-  // tua API...
+  res.json({ message: "Mineração iniciada!" });
 });
 
-// se for SPA: retorna sempre o index.html para rotas não-API
+// Rotas HTML separadas (opcional)
+app.get("/dashboard", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "dashboard.html"));
+});
+
+app.get("/mining", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "mining.html"));
+});
+
+// Rota “catch all” para SPA ou rotas desconhecidas
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
