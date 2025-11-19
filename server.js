@@ -1,40 +1,42 @@
 import express from "express";
 import mongoose from "mongoose";
-import path from "path";
 import dotenv from "dotenv";
+import cors from "cors";
+import path from "path";
 import { fileURLToPath } from "url";
+
+import authRoutes from "./routes/authRoutes.js";
+import miningRoutes from "./routes/miningRoutes.js";
 
 dotenv.config();
 
 const app = express();
 
-// Fixar paths em ES Modules
+app.use(cors());
+app.use(express.json());
+
+// Fix para __dirname em ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Middleware
-app.use(express.json());
+// Servir arquivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
 
-// Conexão MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("MongoDB conectado com sucesso!"))
-.catch((err) => console.error("Erro ao conectar ao MongoDB:", err));
+// Rotas
+app.use("/api/auth", authRoutes);
+app.use("/api/mining", miningRoutes);
 
-// Rotas temporárias (placeholder)
-app.get("/api/test", (req, res) => {
-  res.json({ message: "API está funcionando!" });
+// Página inicial
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
-// Rota principal
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
+// Conexão com MongoDB
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB conectado!"))
+  .catch(err => console.error("Erro no MongoDB:", err));
 
+// Porta Render
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () =>
-  console.log(`Servidor rodando na porta ${PORT}`)
-);
+app.listen(PORT, () => console.log("Servidor rodando na porta " + PORT));
