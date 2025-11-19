@@ -7,17 +7,12 @@ h1 {
   color: #333;
 }
 
-nav a {
+nav button {
   margin-right: 10px;
-  text-decoration: none;
-  color: #007bff;
-}
-
-nav a:hover {
-  text-decoration: underline;
-}
-
-button {
-  padding: 10px 20px;
+  padding: 10px 15px;
   cursor: pointer;
+}
+
+section {
+  margin-top: 20px;
 }
