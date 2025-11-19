@@ -7,19 +7,12 @@
 </head>
 <body>
   <nav>
-    <button onclick="showSection('home')">Home</button>
     <button onclick="showSection('dashboard')">Dashboard</button>
     <button onclick="showSection('mining')">Mineração</button>
   </nav>
 
-  <!-- Seção Home -->
-  <section id="home">
-    <h1>Bem-vindo à Plataforma de Mineração</h1>
-    <p>Aqui você encontra todas as funcionalidades.</p>
-  </section>
-
   <!-- Seção Dashboard -->
-  <section id="dashboard" style="display:none;">
+  <section id="dashboard">
     <h1>Dashboard do Usuário</h1>
     <p>Status da mineração: <span id="status">Parado</span></p>
     <button id="startBtn">Iniciar Mineração</button>
@@ -33,4 +26,4 @@
 
   <script src="js/app.js"></script>
 </body>
-    </html>
+</html>
