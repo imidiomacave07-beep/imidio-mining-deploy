@@ -1,8 +1,0 @@
-{
-  "usuarios": [],
-  "planos": [
-    { "nome": "Plano Básico", "preco": "10 USD" },
-    { "nome": "Plano Avançado", "preco": "25 USD" },
-    { "nome": "Plano Premium", "preco": "50 USD" }
-  ]
-}
