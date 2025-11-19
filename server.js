@@ -17,19 +17,20 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Conectar ao MongoDB
+// Conectar ao MongoDB remoto
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-}).then(() => console.log("MongoDB conectado"))
-  .catch(err => console.log(err));
+})
+.then(() => console.log("MongoDB conectado!"))
+.catch(err => console.error("Erro ao conectar MongoDB:", err));
 
-// Rotas
+// Rotas da API
 app.use("/api/auth", authRoutes);
 app.use("/api/plans", planRoutes);
 app.use("/api/mining", miningRoutes);
 
-// Catch-all: envia index.html
+// Catch-all para SPA
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
