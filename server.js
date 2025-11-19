@@ -1,20 +1,35 @@
 import express from "express";
 import path from "path";
-import { fileURLToPath } from "url";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-const app = express();
+import authRoutes from "./routes/auth.js";
+import planRoutes from "./routes/plans.js";
+import miningRoutes from "./routes/mining.js";
+
+import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Servir arquivos estáticos
+dotenv.config();
+const app = express();
+
+app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-// API de mineração
-app.get("/api/start-mining", (req, res) => {
-  res.json({ message: "Mineração iniciada!" });
-});
+// Conectar ao MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => console.log("MongoDB conectado"))
+  .catch(err => console.log(err));
 
-// Catch-all: tudo vai para index.html
+// Rotas
+app.use("/api/auth", authRoutes);
+app.use("/api/plans", planRoutes);
+app.use("/api/mining", miningRoutes);
+
+// Catch-all: envia index.html
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
