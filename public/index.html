@@ -1,29 +1,32 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-  <meta charset="UTF-8">
-  <title>Imidio Mining</title>
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <nav>
-    <button onclick="showSection('dashboard')">Dashboard</button>
-    <button onclick="showSection('mining')">Mineração</button>
-  </nav>
+<h2>Status da mineração: <span id="status">Carregando...</span></h2>
+<button id="startBtn">Iniciar Mineração</button>
+<button id="stopBtn">Parar Mineração</button>
 
-  <!-- Seção Dashboard -->
-  <section id="dashboard">
-    <h1>Dashboard do Usuário</h1>
-    <p>Status da mineração: <span id="status">Parado</span></p>
-    <button id="startBtn">Iniciar Mineração</button>
-  </section>
+<script>
+  const statusEl = document.getElementById("status");
+  const startBtn = document.getElementById("startBtn");
+  const stopBtn = document.getElementById("stopBtn");
 
-  <!-- Seção Mineração -->
-  <section id="mining" style="display:none;">
-    <h1>Painel de Mineração</h1>
-    <p>A mineração está em andamento...</p>
-  </section>
+  // Atualizar status
+  async function getStatus() {
+    const res = await fetch("/api/mining/status");
+    const data = await res.json();
+    statusEl.textContent = data.status;
+  }
 
-  <script src="js/app.js"></script>
-</body>
-</html>
+  getStatus(); // chama no carregamento da página
+
+  // Iniciar mineração
+  startBtn.addEventListener("click", async () => {
+    const res = await fetch("/api/mining/start", { method: "POST" });
+    const data = await res.json();
+    statusEl.textContent = data.status;
+  });
+
+  // Parar mineração
+  stopBtn.addEventListener("click", async () => {
+    const res = await fetch("/api/mining/stop", { method: "POST" });
+    const data = await res.json();
+    statusEl.textContent = data.status;
+  });
+                            </script>
