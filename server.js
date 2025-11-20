@@ -9,19 +9,19 @@ import authRoutes from "./routes/authRoutes.js";
 import miningRoutes from "./routes/miningRoutes.js";
 
 dotenv.config();
-
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
-// Correção do __dirname em ES Modules
+// Corrige __dirname para ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Servir arquivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
 
-// Rotas da API
+// Rotas
 app.use("/api/auth", authRoutes);
 app.use("/api/mining", miningRoutes);
 
@@ -30,7 +30,7 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Conexão MongoDB
+// Conectar MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB conectado!"))
