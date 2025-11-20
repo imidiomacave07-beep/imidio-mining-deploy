@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Mineração</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #101820;
+      color: white;
+      text-align: center;
+      padding: 50px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+    }
+    #startBtn { background-color: #00b894; color: white; }
+    #stopBtn { background-color: #d63031; color: white; }
+    #status { font-size: 20px; margin: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Dashboard do Usuário</h1>
+  <div id="status">Status da mineração: Carregando...</div>
+  <button id="startBtn">Iniciar Mineração</button>
+  <button id="stopBtn">Parar Mineração</button>
+
+  <script>
+    const statusEl = document.getElementById("status");
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+
+    const API_URL = "/api/mining";
+
+    async function updateStatus() {
+      try {
+        const res = await fetch(`${API_URL}/status`);
+        if (!res.ok) throw new Error("Erro ao buscar status");
+        const data = await res.json();
+        statusEl.textContent = `Status da mineração: ${data.status}`;
+      } catch (err) {
+        statusEl.textContent = "Erro ao carregar status";
+        console.error(err);
+      }
+    }
+
+    async function startMining() {
+      try {
+        const res = await fetch(`${API_URL}/start`, { method: "POST" });
+        if (!res.ok) throw new Error("Erro ao iniciar mineração");
+        await updateStatus();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function stopMining() {
+      try {
+        const res = await fetch(`${API_URL}/stop`, { method: "POST" });
+        if (!res.ok) throw new Error("Erro ao parar mineração");
+        await updateStatus();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    startBtn.addEventListener("click", startMining);
+    stopBtn.addEventListener("click", stopMining);
+
+    // Atualiza status a cada 5 segundos
+    updateStatus();
+    setInterval(updateStatus, 5000);
+  </script>
+</body>
+</html>
