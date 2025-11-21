@@ -1,32 +1,19 @@
-<h2>Status da mineração: <span id="status">Carregando...</span></h2>
-<button id="startBtn">Iniciar Mineração</button>
-<button id="stopBtn">Parar Mineração</button>
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Mineração</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    button { margin: 10px; padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>Dashboard do Usuário</h1>
+  <p id="status">Status da mineração: Carregando...</p>
+  <button id="startBtn">Iniciar Mineração</button>
+  <button id="stopBtn">Parar Mineração</button>
 
-<script>
-  const statusEl = document.getElementById("status");
-  const startBtn = document.getElementById("startBtn");
-  const stopBtn = document.getElementById("stopBtn");
-
-  // Atualizar status
-  async function getStatus() {
-    const res = await fetch("/api/mining/status");
-    const data = await res.json();
-    statusEl.textContent = data.status;
-  }
-
-  getStatus(); // chama no carregamento da página
-
-  // Iniciar mineração
-  startBtn.addEventListener("click", async () => {
-    const res = await fetch("/api/mining/start", { method: "POST" });
-    const data = await res.json();
-    statusEl.textContent = data.status;
-  });
-
-  // Parar mineração
-  stopBtn.addEventListener("click", async () => {
-    const res = await fetch("/api/mining/stop", { method: "POST" });
-    const data = await res.json();
-    statusEl.textContent = data.status;
-  });
-</script>
+  <script src="dashboard.js"></script>
+</body>
+</html>
