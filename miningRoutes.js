@@ -1,26 +1,23 @@
-// src/routes/miningRoutes.js
 import express from "express";
-
 const router = express.Router();
 
-// Estado simulado da mineração
-let miningStatus = "Parado"; // Pode ser "Rodando" ou "Parado"
+let miningStatus = "Parado";
 
-// Rota para obter status da mineração
+// Status da mineração
 router.get("/status", (req, res) => {
   res.json({ status: miningStatus });
 });
 
-// Rota para iniciar mineração
+// Iniciar mineração
 router.post("/start", (req, res) => {
-  miningStatus = "Rodando";
-  res.json({ status: miningStatus, message: "Mineração iniciada!" });
+  miningStatus = "Em execução";
+  res.json({ status: miningStatus });
 });
 
-// Rota para parar mineração
+// Parar mineração
 router.post("/stop", (req, res) => {
   miningStatus = "Parado";
-  res.json({ status: miningStatus, message: "Mineração parada!" });
+  res.json({ status: miningStatus });
 });
 
 export default router;
