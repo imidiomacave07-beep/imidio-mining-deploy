@@ -5,39 +5,50 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 
-dotenv.config();
+import authRoutes from "./routes/authRoutes.js";
+import miningRoutes from "./routes/miningRoutes.js";
 
-// CRIAR O APP PRIMEIRO
+dotenv.config();
 const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
 
 // Corrige __dirname para ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Middlewares
-app.use(cors());
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "public"))); // serve a pasta 'public'
+// Servir arquivos estáticos da pasta public
+app.use(express.static(path.join(__dirname, "public")));
 
 // Rotas
-import authRoutes from "./routes/authRoutes.js";
-import miningRoutes from "./routes/miningRoutes.js";
-
 app.use("/api/auth", authRoutes);
 app.use("/api/mining", miningRoutes);
 
-// Rota do dashboard
+// Página inicial
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// Dashboard
 app.get("/dashboard", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "dashboard.html"));
 });
 
-// Conexão com MongoDB
+// Conectar MongoDB
 const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/imidioMiningDB";
+
 mongoose
-  .connect(mongoURI)
+  .connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("MongoDB conectado!"))
   .catch((err) => console.error("Erro MongoDB:", err));
 
-// Iniciar servidor
+// Porta
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
