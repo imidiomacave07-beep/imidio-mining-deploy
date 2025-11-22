@@ -5,10 +5,12 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 
+import authRoutes from "./routes/authRoutes.js";
+import miningRoutes from "./routes/miningRoutes.js";
+
 dotenv.config();
 
-const app = express(); // <- isso é ESSENCIAL
-
+const app = express();
 app.use(cors());
 app.use(express.json());
 
@@ -20,9 +22,6 @@ const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "public")));
 
 // Rotas
-import authRoutes from "./routes/authRoutes.js";
-import miningRoutes from "./routes/miningRoutes.js";
-
 app.use("/api/auth", authRoutes);
 app.use("/api/mining", miningRoutes);
 
@@ -32,13 +31,13 @@ app.get("/", (req, res) => {
 });
 
 // Conectar MongoDB
-const mongoUri = process.env.MONGO_URI || "mongodb://localhost:27017/imidioMiningDB";
+const mongoURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/imidioMiningDB";
 
 mongoose
-  .connect(mongoUri)
+  .connect(mongoURI)
   .then(() => console.log("MongoDB conectado!"))
-  .catch(err => console.log("Erro MongoDB:", err));
+  .catch((err) => console.log("Erro MongoDB:", err));
 
-// Servidor
-const PORT = process.env.PORT || 10000;
+// Porta
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
