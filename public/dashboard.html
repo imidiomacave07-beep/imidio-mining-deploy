@@ -1,39 +1,48 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-<meta charset="UTF-8">
-<title>Dashboard Mineração</title>
-</head>
-<body>
-<h1>Dashboard do Usuário</h1>
 <p>Status da mineração: <span id="status">Carregando...</span></p>
-<button onclick="startMining()">Iniciar Mineração</button>
-<button onclick="stopMining()">Parar Mineração</button>
+<button id="startBtn">Iniciar Mineração</button>
+<button id="stopBtn">Parar Mineração</button>
 
 <script>
-async function updateStatus() {
-  try {
-    const res = await fetch("/api/mining/status");
-    const data = await res.json();
-    document.getElementById("status").innerText = data.status;
-  } catch {
-    document.getElementById("status").innerText = "Erro ao carregar status";
+  const statusEl = document.getElementById("status");
+  const startBtn = document.getElementById("startBtn");
+  const stopBtn = document.getElementById("stopBtn");
+
+  // Função para atualizar o status
+  async function fetchStatus() {
+    try {
+      const res = await fetch("/api/mining/status");
+      const data = await res.json();
+      statusEl.textContent = data.status;
+    } catch (err) {
+      statusEl.textContent = "Erro ao carregar status";
+      console.error(err);
+    }
   }
-}
 
-async function startMining() {
-  await fetch("/api/mining/start", { method: "POST" });
-  updateStatus();
-}
+  // Iniciar mineração
+  startBtn.addEventListener("click", async () => {
+    try {
+      const res = await fetch("/api/mining/start", { method: "POST" });
+      const data = await res.json();
+      statusEl.textContent = data.status;
+    } catch (err) {
+      statusEl.textContent = "Erro ao iniciar";
+      console.error(err);
+    }
+  });
 
-async function stopMining() {
-  await fetch("/api/mining/stop", { method: "POST" });
-  updateStatus();
-}
+  // Parar mineração
+  stopBtn.addEventListener("click", async () => {
+    try {
+      const res = await fetch("/api/mining/stop", { method: "POST" });
+      const data = await res.json();
+      statusEl.textContent = data.status;
+    } catch (err) {
+      statusEl.textContent = "Erro ao parar";
+      console.error(err);
+    }
+  });
 
-// Atualiza status a cada 2s
-setInterval(updateStatus, 2000);
-updateStatus();
+  // Atualiza o status ao carregar a página
+  fetchStatus();
 </script>
-</body>
-</html>
