@@ -9,13 +9,13 @@ router.get("/status", (req, res) => {
 });
 
 // Iniciar mineração
-router.post("/start", (req, res) => {
+router.post("/start-mining", (req, res) => {
   miningStatus = "Em execução";
   res.json({ status: miningStatus });
 });
 
 // Parar mineração
-router.post("/stop", (req, res) => {
+router.post("/stop-mining", (req, res) => {
   miningStatus = "Parado";
   res.json({ status: miningStatus });
 });
