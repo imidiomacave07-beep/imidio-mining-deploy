@@ -1,48 +1,34 @@
-<p>Status da mineração: <span id="status">Carregando...</span></p>
-<button id="startBtn">Iniciar Mineração</button>
-<button id="stopBtn">Parar Mineração</button>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+</head>
+<body>
+  <h1>MINERAÇÃO</h1>
 
-<script>
-  const statusEl = document.getElementById("status");
-  const startBtn = document.getElementById("startBtn");
-  const stopBtn = document.getElementById("stopBtn");
+  <button onclick="start()">Iniciar</button>
+  <button onclick="stop()">Parar</button>
 
-  // Função para atualizar o status
-  async function fetchStatus() {
-    try {
+  <p id="status">Carregando...</p>
+
+  <script>
+    async function loadStatus() {
       const res = await fetch("/api/mining/status");
       const data = await res.json();
-      statusEl.textContent = data.status;
-    } catch (err) {
-      statusEl.textContent = "Erro ao carregar status";
-      console.error(err);
+      document.getElementById("status").innerText = data.status;
     }
-  }
 
-  // Iniciar mineração
-  startBtn.addEventListener("click", async () => {
-    try {
-      const res = await fetch("/api/mining/start", { method: "POST" });
-      const data = await res.json();
-      statusEl.textContent = data.status;
-    } catch (err) {
-      statusEl.textContent = "Erro ao iniciar";
-      console.error(err);
+    async function start() {
+      await fetch("/api/mining/start", { method: "POST" });
+      loadStatus();
     }
-  });
 
-  // Parar mineração
-  stopBtn.addEventListener("click", async () => {
-    try {
-      const res = await fetch("/api/mining/stop", { method: "POST" });
-      const data = await res.json();
-      statusEl.textContent = data.status;
-    } catch (err) {
-      statusEl.textContent = "Erro ao parar";
-      console.error(err);
+    async function stop() {
+      await fetch("/api/mining/stop", { method: "POST" });
+      loadStatus();
     }
-  });
 
-  // Atualiza o status ao carregar a página
-  fetchStatus();
-</script>
+    loadStatus();
+  </script>
+</body>
+</html>
