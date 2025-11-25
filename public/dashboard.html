@@ -57,7 +57,7 @@
     const stopBtn = document.getElementById("stopBtn");
     const statusDiv = document.getElementById("status");
 
-    // Função para atualizar o status da mineração
+    // Atualiza o status
     async function updateStatus() {
       try {
         const res = await fetch("/api/mining/status");
@@ -69,7 +69,7 @@
       }
     }
 
-    // Inicializa status ao carregar a página
+    // Inicializa o status ao carregar a página
     updateStatus();
 
     // Iniciar mineração
@@ -96,7 +96,7 @@
       }
     });
 
-    // Atualiza status a cada 5 segundos
+    // Atualiza status a cada 5s
     setInterval(updateStatus, 5000);
   </script>
 </body>
