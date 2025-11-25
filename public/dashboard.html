@@ -1,91 +1,89 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Mineração</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background: #0d0d0d;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        h1 {
-            margin-top: 30px;
-        }
-
-        .status-box {
-            margin-top: 20px;
-            background: #1a1a1a;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
-            font-size: 20px;
-        }
-
-        button {
-            margin: 15px;
-            padding: 12px 24px;
-            font-size: 18px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            color: white;
-        }
-
-        .start {
-            background: #00b32d;
-        }
-
-        .stop {
-            background: #cc0000;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard</title>
+  <style>
+    body{font-family:Arial;background:#fff;margin:0;padding:20px}
+    header{display:flex;justify-content:space-between;align-items:center}
+    .status{margin-top:20px;padding:20px;background:#f0f0f0;border-radius:8px}
+    button{padding:10px 14px;margin-left:8px}
+  </style>
 </head>
 <body>
-
-    <h1>💠 Plataforma de Mineração</h1>
-
-    <div class="status-box">
-        <span id="status-text">Carregando...</span>
+  <header>
+    <div>
+      <strong>Imidio Mining</strong>
+      <span id="userName" style="margin-left:10px;color:#666"></span>
     </div>
+    <div>
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </header>
 
-    <button class="start" onclick="startMining()">Iniciar Mineração</button>
-    <button class="stop" onclick="stopMining()">Parar Mineração</button>
+  <main>
+    <h2>Dashboard de Mineração</h2>
+    <div class="status">
+      <p id="statusText">Carregando...</p>
+      <button id="startBtn">Iniciar Mineração</button>
+      <button id="stopBtn">Parar Mineração</button>
+    </div>
+  </main>
 
-    <script>
-        async function fetchStatus() {
-            try {
-                const res = await fetch('/status');
-                const data = await res.json();
-                document.getElementById('status-text').innerText =
-                    data.running ? "Status da mineração: Em execução" : "Status da mineração: Parada";
-            } catch (err) {
-                document.getElementById('status-text').innerText = "Erro ao carregar status";
-            }
-        }
+  <script>
+    // checar token
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-        async function startMining() {
-            await fetch('/start-mining', { method: 'POST' });
-            fetchStatus();
-        }
+    if (!token) {
+      window.location.href = "/login.html";
+    } else {
+      document.getElementById("userName").innerText = user.name || "";
+    }
 
-        async function stopMining() {
-            await fetch('/stop-mining', { method: 'POST' });
-            fetchStatus();
-        }
+    async function apiFetch(path, opts = {}) {
+      opts.headers = opts.headers || {};
+      opts.headers["Content-Type"] = "application/json";
+      opts.headers["Authorization"] = "Bearer " + token;
+      const res = await fetch("/api/mining" + path, opts);
+      if (res.status === 401) {
+        // token inválido/expirado
+        localStorage.removeItem("token");
+        window.location.href = "/login.html";
+        return;
+      }
+      return res;
+    }
 
-        fetchStatus();
-        setInterval(fetchStatus, 5000); // Atualiza automaticamente a cada 5s
-    </script>
+    async function refreshStatus() {
+      try {
+        const res = await apiFetch("/status");
+        if (!res) return;
+        const data = await res.json();
+        document.getElementById("statusText").innerText = "Status: " + data.status;
+      } catch (err) {
+        document.getElementById("statusText").innerText = "Erro ao carregar status";
+      }
+    }
 
+    document.getElementById("startBtn").addEventListener("click", async () => {
+      await apiFetch("/start", { method: "POST" });
+      refreshStatus();
+    });
+    document.getElementById("stopBtn").addEventListener("click", async () => {
+      await apiFetch("/stop", { method: "POST" });
+      refreshStatus();
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login.html";
+    });
+
+    refreshStatus();
+    setInterval(refreshStatus, 5000);
+  </script>
 </body>
 </html>
