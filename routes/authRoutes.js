@@ -1,34 +1,57 @@
+// routes/authRoutes.js
 import express from "express";
-import User from "../models/User.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 const router = express.Router();
 
-// Registrar usuário
+// Model (separado opcional — aqui inline para simplicidade)
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: { type: String, unique: true },
+  password: String,
+});
+const User = mongoose.models.User || mongoose.model("User", userSchema);
+
+// Register
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    if (!name || !email || !password) return res.json({ success:false, message:"Preencha todos os campos" });
 
-    const user = new User({ name, email, password });
+    const exists = await User.findOne({ email });
+    if (exists) return res.json({ success:false, message:"Email já registrado" });
+
+    const hash = await bcrypt.hash(password, 10);
+    const user = new User({ name, email, password: hash });
     await user.save();
 
-    res.json({ message: "Usuário registrado com sucesso!" });
-  } catch (error) {
-    res.status(400).json({ error: "Erro ao registrar usuário: " + error.message });
+    res.json({ success: true, message: "Conta criada com sucesso" });
+  } catch (err) {
+    console.error(err);
+    res.json({ success:false, message:"Erro interno" });
   }
 });
 
-// Login usuário
+// Login
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+    if (!email || !password) return res.json({ success:false, message:"Preencha todos os campos" });
 
     const user = await User.findOne({ email });
+    if (!user) return res.json({ success:false, message:"Usuário não encontrado" });
 
-    if (!user) return res.status(400).json({ error: "Usuário não encontrado" });
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok) return res.json({ success:false, message:"Senha inválida" });
 
-    res.json({ message: "Login bem-sucedido!", user });
-  } catch (error) {
-    res.status(400).json({ error: "Erro ao fazer login: " + error.message });
+    const token = jwt.sign({ id: user._id, name: user.name, email: user.email }, process.env.JWT_SECRET || "dev_secret", { expiresIn: "7d" });
+
+    res.json({ success:true, message:"Autenticado", token, user: { name: user.name, email: user.email } });
+  } catch (err) {
+    console.error(err);
+    res.json({ success:false, message:"Erro no servidor" });
   }
 });
 
