@@ -1,6 +1,7 @@
 {
-  "name": "imidio-mining",
+  "name": "imidio-mining-deploy",
   "version": "1.0.0",
+  "description": "",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -8,7 +9,10 @@
   },
   "dependencies": {
     "express": "^4.18.2",
-    "path": "^0.12.7"
+    "mongoose": "^7.6.3",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "cors": "^2.8.5"
   },
   "engines": {
     "node": "20.x"
