@@ -3,16 +3,19 @@ const router = express.Router();
 
 let miningStatus = "Parado";
 
+// Ver status atual
 router.get("/status", (req, res) => {
   res.json({ status: miningStatus });
 });
 
-router.post("/start-mining", (req, res) => {
+// Iniciar mineração
+router.post("/start", (req, res) => {
   miningStatus = "Em execução";
   res.json({ status: miningStatus });
 });
 
-router.post("/stop-mining", (req, res) => {
+// Parar mineração
+router.post("/stop", (req, res) => {
   miningStatus = "Parado";
   res.json({ status: miningStatus });
 });
