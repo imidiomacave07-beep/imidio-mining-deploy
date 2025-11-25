@@ -2,20 +2,19 @@
 <html lang="pt">
   <head>
     <meta charset="UTF-8" />
-    <title>Dashboard de Mineração</title>
+    <title>Dashboard</title>
   </head>
   <body>
     <h1>Status da Mineração</h1>
     <p id="status">Carregando...</p>
-
     <button onclick="startMining()">Iniciar Mineração</button>
     <button onclick="stopMining()">Parar Mineração</button>
 
     <script>
       async function loadStatus() {
-        const response = await fetch("/api/mining/status");
-        const data = await response.json();
-        document.getElementById("status").innerText = "Status: " + data.status;
+        const res = await fetch("/api/mining/status");
+        const data = await res.json();
+        document.getElementById("status").innerText = data.status;
       }
 
       async function startMining() {
