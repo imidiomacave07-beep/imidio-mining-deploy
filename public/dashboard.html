@@ -1,33 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Dashboard</title>
-  </head>
-  <body>
-    <h1>Status da Mineração</h1>
-    <p id="status">Carregando...</p>
-    <button onclick="startMining()">Iniciar Mineração</button>
-    <button onclick="stopMining()">Parar Mineração</button>
+<head>
+  <meta charset="UTF-8" />
+  <title>Plataforma de Mineração</title>
+</head>
+<body>
+  <h1>Status da mineração: <span id="status">Carregando...</span></h1>
 
-    <script>
-      async function loadStatus() {
-        const res = await fetch("/api/mining/status");
-        const data = await res.json();
-        document.getElementById("status").innerText = data.status;
-      }
+  <button onclick="startMining()">Iniciar Mineração</button>
+  <button onclick="stopMining()">Parar Mineração</button>
 
-      async function startMining() {
-        await fetch("/api/mining/start-mining", { method: "POST" });
-        loadStatus();
-      }
-
-      async function stopMining() {
-        await fetch("/api/mining/stop-mining", { method: "POST" });
-        loadStatus();
-      }
-
-      loadStatus();
-    </script>
-  </body>
+  <script src="script.js"></script>
+</body>
 </html>
