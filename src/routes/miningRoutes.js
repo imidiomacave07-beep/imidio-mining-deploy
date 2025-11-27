@@ -1,23 +1,38 @@
 import express from "express";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
 const router = express.Router();
 
-let miningStatus = "Parado";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Retorna status da mineração
+const statusFile = path.join(__dirname, "..", "miningStatus.json");
+
+function getStatus() {
+  if (!fs.existsSync(statusFile)) {
+    return { status: "Parado" };
+  }
+  return JSON.parse(fs.readFileSync(statusFile, "utf8"));
+}
+
+function saveStatus(newStatus) {
+  fs.writeFileSync(statusFile, JSON.stringify(newStatus, null, 2));
+}
+
 router.get("/status", (req, res) => {
-  res.json({ status: miningStatus });
+  res.json(getStatus());
 });
 
-// Iniciar mineração
 router.post("/start-mining", (req, res) => {
-  miningStatus = "Em execução";
-  res.json({ status: miningStatus });
+  saveStatus({ status: "Em execução" });
+  res.json({ status: "Em execução" });
 });
 
-// Parar mineração
 router.post("/stop-mining", (req, res) => {
-  miningStatus = "Parado";
-  res.json({ status: miningStatus });
+  saveStatus({ status: "Parado" });
+  res.json({ status: "Parado" });
 });
 
 export default router;
