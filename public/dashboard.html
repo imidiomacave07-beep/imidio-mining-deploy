@@ -3,87 +3,27 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard</title>
-  <style>
-    body{font-family:Arial;background:#fff;margin:0;padding:20px}
-    header{display:flex;justify-content:space-between;align-items:center}
-    .status{margin-top:20px;padding:20px;background:#f0f0f0;border-radius:8px}
-    button{padding:10px 14px;margin-left:8px}
-  </style>
+  <title>Dashboard | Imidio Mining</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <header>
+    <h2>Imidio Mining</h2>
     <div>
-      <strong>Imidio Mining</strong>
-      <span id="userName" style="margin-left:10px;color:#666"></span>
-    </div>
-    <div>
-      <button id="logoutBtn">Logout</button>
+      <span id="userName"></span>
+      <button id="logoutBtn" class="btn danger">Logout</button>
     </div>
   </header>
 
-  <main>
-    <h2>Dashboard de Mineração</h2>
-    <div class="status">
-      <p id="statusText">Carregando...</p>
-      <button id="startBtn">Iniciar Mineração</button>
-      <button id="stopBtn">Parar Mineração</button>
-    </div>
-  </main>
+  <section class="card">
+    <h3>Status da Mineração</h3>
+    <p id="statusText">Carregando...</p>
 
-  <script>
-    // checar token
-    const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    <button id="startBtn" class="btn">Iniciar Mineração</button>
+    <button id="stopBtn" class="btn">Parar Mineração</button>
+  </section>
 
-    if (!token) {
-      window.location.href = "/login.html";
-    } else {
-      document.getElementById("userName").innerText = user.name || "";
-    }
-
-    async function apiFetch(path, opts = {}) {
-      opts.headers = opts.headers || {};
-      opts.headers["Content-Type"] = "application/json";
-      opts.headers["Authorization"] = "Bearer " + token;
-      const res = await fetch("/api/mining" + path, opts);
-      if (res.status === 401) {
-        // token inválido/expirado
-        localStorage.removeItem("token");
-        window.location.href = "/login.html";
-        return;
-      }
-      return res;
-    }
-
-    async function refreshStatus() {
-      try {
-        const res = await apiFetch("/status");
-        if (!res) return;
-        const data = await res.json();
-        document.getElementById("statusText").innerText = "Status: " + data.status;
-      } catch (err) {
-        document.getElementById("statusText").innerText = "Erro ao carregar status";
-      }
-    }
-
-    document.getElementById("startBtn").addEventListener("click", async () => {
-      await apiFetch("/start", { method: "POST" });
-      refreshStatus();
-    });
-    document.getElementById("stopBtn").addEventListener("click", async () => {
-      await apiFetch("/stop", { method: "POST" });
-      refreshStatus();
-    });
-
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      window.location.href = "/login.html";
-    });
-
-    refreshStatus();
-    setInterval(refreshStatus, 5000);
-  </script>
+  <script src="dashboard.js"></script>
 </body>
 </html>
