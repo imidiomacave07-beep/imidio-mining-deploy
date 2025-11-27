@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard | Imidio Mining</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h2>Imidio Mining</h2>
+    <div>
+      <span id="userName"></span>
+      <button id="logoutBtn" class="btn danger">Logout</button>
+    </div>
+  </header>
+
+  <section class="card">
+    <h3>Status da Mineração</h3>
+    <p id="statusText">Carregando...</p>
+
+    <button id="startBtn" class="btn">Iniciar Mineração</button>
+    <button id="stopBtn" class="btn">Parar Mineração</button>
+  </section>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
