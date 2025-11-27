@@ -1,25 +1,48 @@
-async function getStatus() {
-  try {
-    const res = await fetch("/api/mining/status");
-    const data = await res.json();
-    document.getElementById("status").innerText = "Status da mineração: " + data.status;
-  } catch (err) {
-    document.getElementById("status").innerText = "Erro ao carregar status";
-  }
+// pegar token salvo
+const token = localStorage.getItem("token");
+const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+// se não tiver autenticado, volta ao login
+if (!token) {
+  window.location.href = "/login.html";
 }
 
-async function startMining() {
-  await fetch("/api/mining/start", { method: "POST" });
-  getStatus();
+document.getElementById("userName").innerText = user.name || "";
+
+// Função para chamadas à API de mineração
+async function api(path, method = "GET") {
+  const res = await fetch("/api/mining" + path, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    }
+  });
+  return await res.json();
 }
 
-async function stopMining() {
-  await fetch("/api/mining/stop", { method: "POST" });
-  getStatus();
+// Atualizar o status da mineração
+async function loadStatus() {
+  const data = await api("/status");
+  document.getElementById("statusText").innerText = "Status: " + data.status;
 }
 
-document.getElementById("startBtn").addEventListener("click", startMining);
-document.getElementById("stopBtn").addEventListener("click", stopMining);
+// Botões
+document.getElementById("startBtn").onclick = async () => {
+  await api("/start", "POST");
+  loadStatus();
+};
 
-// Atualiza status ao carregar a página
-getStatus();
+document.getElementById("stopBtn").onclick = async () => {
+  await api("/stop", "POST");
+  loadStatus();
+};
+
+document.getElementById("logoutBtn").onclick = () => {
+  localStorage.clear();
+  window.location.href = "/login.html";
+};
+
+// carregar imediatamente
+loadStatus();
+setInterval(loadStatus, 5000);
