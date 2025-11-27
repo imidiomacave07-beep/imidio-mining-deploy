@@ -1,150 +1,38 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Imidio Mining Dashboard</title>
-
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #0d1117;
-            color: white;
-        }
-
-        header {
-            background: #161b22;
-            padding: 20px;
-            text-align: center;
-            font-size: 26px;
-            font-weight: bold;
-            border-bottom: 2px solid #30363d;
-        }
-
-        .container {
-            margin: 30px auto;
-            max-width: 900px;
-            padding: 20px;
-        }
-
-        .card {
-            background: #161b22;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #30363d;
-            margin-bottom: 20px;
-        }
-
-        .title {
-            font-size: 20px;
-            margin-bottom: 12px;
-            font-weight: bold;
-        }
-
-        .status-box {
-            padding: 15px;
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            font-size: 18px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        button {
-            width: 48%;
-            padding: 15px;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            color: white;
-        }
-
-        .start {
-            background: #238636;
-        }
-
-        .start:hover {
-            background: #2ea043;
-        }
-
-        .stop {
-            background: #da3633;
-        }
-
-        .stop:hover {
-            background: #f85149;
-        }
-
-        .buttons {
-            display: flex;
-            justify-content: space-between;
-        }
-    </style>
-
+  <meta charset="UTF-8">
+  <title>Dashboard de Mineração</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<header>
-    IMIDIO MINING PLATFORM
-</header>
+<h1>Dashboard de Mineração</h1>
 
-<div class="container">
+<button id="startBtn">Iniciar Mineração</button>
+<button id="stopBtn">Parar Mineração</button>
 
-    <div class="card">
-        <div class="title">Status da Mineração</div>
-
-        <div class="status-box" id="miningStatus">Carregando...</div>
-
-        <div class="buttons">
-            <button class="start" onclick="startMining()">Iniciar Mineração</button>
-            <button class="stop" onclick="stopMining()">Parar Mineração</button>
-        </div>
-
-    </div>
-
-    <div class="card">
-        <div class="title">Estatísticas</div>
-        <p>Hash rate: <span id="hashRate">0 H/s</span></p>
-        <p>Moedas mineradas: <span id="coins">0.0000</span></p>
-        <p>Última atualização: <span id="lastUpdate">--</span></p>
-    </div>
-
-</div>
+<div id="status">Carregando...</div>
 
 <script>
-    async function loadStatus() {
-        try {
-            const res = await fetch("/mining/status");
-            const data = await res.json();
+async function updateStatus() {
+  const res = await fetch("/api/mining/status");
+  const data = await res.json();
+  document.getElementById("status").innerText =
+    "Status da mineração: " + data.status;
+}
 
-            document.getElementById("miningStatus").textContent =
-                data.active ? "Mineração Ativa" : "Mineração Parada";
+updateStatus();
+setInterval(updateStatus, 3000);
 
-            document.getElementById("hashRate").textContent = data.hashRate + " H/s";
-            document.getElementById("coins").textContent = data.coins;
-            document.getElementById("lastUpdate").textContent = data.lastUpdate;
-
-        } catch (err) {
-            document.getElementById("miningStatus").textContent = "Erro ao carregar.";
-        }
-    }
-
-    async function startMining() {
-        await fetch("/mining/start", { method: "POST" });
-        loadStatus();
-    }
-
-    async function stopMining() {
-        await fetch("/mining/stop", { method: "POST" });
-        loadStatus();
-    }
-
-    loadStatus();
-    setInterval(loadStatus, 4000);
+document.getElementById("startBtn").onclick = async () => {
+  await fetch("/api/mining/start-mining", { method: "POST" });
+  updateStatus();
+};
+document.getElementById("stopBtn").onclick = async () => {
+  await fetch("/api/mining/stop-mining", { method: "POST" });
+  updateStatus();
+};
 </script>
 
 </body>
