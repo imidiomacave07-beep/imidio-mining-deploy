@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Confirmar Depósito — Imidio Mining</title>
+  <style>
+    body{font-family:Arial;background:#f4f4f4;padding:20px}
+    .card{max-width:640px;margin:30px auto;background:#fff;padding:20px;border-radius:8px}
+    input{width:100%;padding:10px;border-radius:6px;border:1px solid #ccc}
+    button{margin-top:8px;padding:10px 12px;background:#27ae60;color:#fff;border:0;border-radius:6px;cursor:pointer}
+    #status{margin-top:12px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Confirmar Depósito</h2>
+    <p>Cole o <strong>txHash</strong> da transacção enviada para o nosso endereço.</p>
+    <input id="txHash" placeholder="Ex: 0xabc123..." />
+    <button id="verify">Verificar</button>
+    <div id="status"></div>
+  </div>
+
+  <script>
+    document.getElementById("verify").addEventListener("click", async () => {
+      const txHash = document.getElementById("txHash").value.trim();
+      const status = document.getElementById("status");
+      if (!txHash) return alert("Coloca o txHash");
+      status.innerText = "A verificar...";
+      try {
+        const res = await fetch("/api/wallets/verify-deposit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ txHash })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          status.innerText = `Transacção confirmada: ${data.amount || 'valor desconhecido'} USDT — Status: ${data.status}`;
+        } else {
+          status.innerText = `Erro: ${data.error || data.message || JSON.stringify(data)}`;
+        }
+      } catch (e) {
+        status.innerText = "Erro no servidor";
+      }
+    });
+  </script>
+</body>
+</html>
