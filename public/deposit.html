@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Depositar USDT (BEP20) — Imidio Mining</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding:20px; background:#f7f7f7; }
+    .card { max-width:720px; margin:30px auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+    h1 { margin-top:0; }
+    pre { background:#f0f0f0; padding:10px; border-radius:4px; overflow-x:auto; }
+    button { padding:10px 12px; margin:6px 6px 6px 0; border:0; border-radius:6px; cursor:pointer; }
+    .copy { background:#2d8cff; color:white; }
+    .confirm { background:#27ae60; color:white; }
+    .note { color:#666; margin-top:12px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Depositar USDT (BEP20)</h1>
+    <p>Aqui está o endereço da nossa carteira para depósitos em USDT (BEP20). Envia o valor e depois confirma com o <strong>txHash</strong>.</p>
+
+    <div>
+      <strong>Endereço de depósito:</strong>
+      <pre id="treasuryAddress">Carregando...</pre>
+      <button class="copy" id="copyBtn">Copiar endereço</button>
+      <button id="qrBtn">Mostrar QR</button>
+    </div>
+
+    <div id="qrContainer" style="margin-top:12px; display:none;"></div>
+
+    <hr>
+
+    <h3>Confirmar Depósito</h3>
+    <p>Depois de enviares, cola aqui o <em>txHash</em> (hash da transacção) e clica em Confirmar.</p>
+    <input id="txHash" placeholder="Ex: 0xabc123..." style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;" />
+    <div style="margin-top:8px;">
+      <button class="confirm" id="confirmBtn">Confirmar Depósito</button>
+    </div>
+
+    <p class="note">Nota: Usamos um único endereço central. Para tua segurança, os depósitos são creditados somente depois de algumas confirmações.</p>
+
+    <div id="status" style="margin-top:12px;"></div>
+  </div>
+
+  <script>
+    // fetch endereço
+    async function loadAddress() {
+      try {
+        const res = await fetch("/api/wallets/deposit-address");
+        const data = await res.json();
+        const addr = data.address || data.treasury || "Não definido";
+        document.getElementById("treasuryAddress").innerText = addr;
+      } catch (e) {
+        document.getElementById("treasuryAddress").innerText = "Erro ao obter endereço";
+      }
+    }
+
+    loadAddress();
+
+    // copiar
+    document.getElementById("copyBtn").addEventListener("click", () => {
+      const addr = document.getElementById("treasuryAddress").innerText;
+      navigator.clipboard.writeText(addr).then(() => alert("Endereço copiado"));
+    });
+
+    // QR (gera um QR simples via API generica)
+    document.getElementById("qrBtn").addEventListener("click", () => {
+      const container = document.getElementById("qrContainer");
+      if (container.style.display === "none") {
+        const addr = document.getElementById("treasuryAddress").innerText;
+        container.innerHTML = "";
+        const img = document.createElement("img");
+        // usa API pública do Google Charts para QR (simples)
+        img.src = "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=" + encodeURIComponent(addr);
+        img.alt = "QR";
+        container.appendChild(img);
+        container.style.display = "block";
+      } else {
+        document.getElementById("qrContainer").style.display = "none";
+      }
+    });
+
+    // confirmar depósito (envia txHash)
+    document.getElementById("confirmBtn").addEventListener("click", async () => {
+      const txHash = document.getElementById("txHash").value.trim();
+      if (!txHash) return alert("Coloca o txHash da transacção.");
+      const statusDiv = document.getElementById("status");
+      statusDiv.innerText = "A verificar transacção...";
+      try {
+        const res = await fetch("/api/wallets/verify-deposit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ txHash })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          statusDiv.innerText = "Resultado: " + (data.status || "OK") + (data.amount ? " — " + data.amount + " USDT" : "");
+        } else {
+          statusDiv.innerText = "Erro: " + (data.error || data.message || JSON.stringify(data));
+        }
+      } catch (e) {
+        statusDiv.innerText = "Erro no servidor.";
+      }
+    });
+  </script>
+</body>
+</html>
