@@ -1,48 +1,52 @@
-// pegar token salvo
-const token = localStorage.getItem("token");
-const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-// se não tiver autenticado, volta ao login
-if (!token) {
-  window.location.href = "/login.html";
+const user = JSON.parse(localStorage.getItem("user"));
+if (!user) {
+    window.location.href = "/login.html";
 }
 
-document.getElementById("userName").innerText = user.name || "";
+// Mostrar saldo
+document.getElementById("saldo").innerText = user.saldo.toFixed(2);
 
-// Função para chamadas à API de mineração
-async function api(path, method = "GET") {
-  const res = await fetch("/api/mining" + path, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + token
+// Mostrar status da mineração
+document.getElementById("statusMineracao").innerText = user.minerando ? "Ativa" : "Desligada";
+
+// Botão iniciar mineração
+document.getElementById("btnIniciar").onclick = async () => {
+    const res = await fetch("/api/minerar/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: user.email })
+    });
+
+    const data = await res.json();
+    alert(data.msg);
+
+    if (data.success) {
+        user.minerando = true;
+        localStorage.setItem("user", JSON.stringify(user));
+        document.getElementById("statusMineracao").innerText = "Ativa";
     }
-  });
-  return await res.json();
-}
-
-// Atualizar o status da mineração
-async function loadStatus() {
-  const data = await api("/status");
-  document.getElementById("statusText").innerText = "Status: " + data.status;
-}
-
-// Botões
-document.getElementById("startBtn").onclick = async () => {
-  await api("/start", "POST");
-  loadStatus();
 };
 
-document.getElementById("stopBtn").onclick = async () => {
-  await api("/stop", "POST");
-  loadStatus();
+// Botão parar mineração
+document.getElementById("btnParar").onclick = async () => {
+    const res = await fetch("/api/minerar/stop", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: user.email })
+    });
+
+    const data = await res.json();
+    alert(data.msg);
+
+    if (data.success) {
+        user.minerando = false;
+        localStorage.setItem("user", JSON.stringify(user));
+        document.getElementById("statusMineracao").innerText = "Desligada";
+    }
 };
 
+// Botão Logout
 document.getElementById("logoutBtn").onclick = () => {
-  localStorage.clear();
-  window.location.href = "/login.html";
+    localStorage.removeItem("user");
+    window.location.href = "/login.html";
 };
-
-// carregar imediatamente
-loadStatus();
-setInterval(loadStatus, 5000);
