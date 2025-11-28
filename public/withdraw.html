@@ -1,4 +1,70 @@
-/* wallet.css */
-body { font-family: Arial, sans-serif; background:#f7f7f7; color:#222 }
-.card { max-width:720px; margin:30px auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.05) }
-button { cursor:pointer }
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sacar USDT — Imidio Mining</title>
+  <style>
+    body{font-family:Arial;background:#f7f7f7;padding:20px}
+    .card{max-width:720px;margin:30px auto;background:#fff;padding:20px;border-radius:8px}
+    input{width:100%;padding:10px;border-radius:6px;border:1px solid #ccc;margin:6px 0}
+    button{padding:10px 12px;background:#2d8cff;color:#fff;border:0;border-radius:6px;cursor:pointer}
+    .danger{background:#c0392b}
+    #result{margin-top:12px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Solicitar Saque (USDT BEP20)</h1>
+    <p>Preenche o valor e o endereço BEP20 para onde queres receber.</p>
+
+    <label>Endereço BEP20:</label>
+    <input id="toAddress" placeholder="0x..." />
+
+    <label>Valor (USDT):</label>
+    <input id="amount" type="number" step="0.0001" placeholder="Ex: 10.5" />
+
+    <div style="margin-top:10px;">
+      <button id="withdrawBtn">Solicitar Saque</button>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    // checar token (opcional se o backend exigir auth)
+    const token = localStorage.getItem("token");
+    if (!token) {
+      // redireciona para login se quiser
+      // window.location.href = "/login.html";
+    }
+
+    document.getElementById("withdrawBtn").addEventListener("click", async () => {
+      const toAddress = document.getElementById("toAddress").value.trim();
+      const amount = document.getElementById("amount").value.trim();
+      const result = document.getElementById("result");
+      if (!toAddress || !amount) return alert("Preenche o endereço e o valor");
+
+      result.innerText = "Enviando pedido de saque...";
+      try {
+        const res = await fetch("/api/wallets/withdraw", {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + (localStorage.getItem("token") || "")
+          },
+          body: JSON.stringify({ toAddress, amount })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          result.innerHTML = `Pedido criado. Tx: ${data.txHash || data.reference || 'PROCESSANDO'}. Status: ${data.status || 'PROCESSING'}`;
+        } else {
+          result.innerText = `Erro: ${data.error || data.message || JSON.stringify(data)}`;
+        }
+      } catch (e) {
+        result.innerText = "Erro no servidor.";
+      }
+    });
+  </script>
+</body>
+</html>
