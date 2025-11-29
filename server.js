@@ -2,31 +2,24 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import mongoose from "mongoose";
-import cors from "cors";
-import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
 
-// Corrigir __dirname para ES Modules
+// Corrigir __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Middlewares
-app.use(cors());
+// JSON
 app.use(express.json());
 
-// Conexão MongoDB (NÃO ESQUECER DE COLOCAR SUA MONGO_URL NO RENDER)
-mongoose.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log("✅ MongoDB conectado"))
-.catch(err => console.log("❌ Erro Mongo:", err));
+// Conectar ao Mongo usando o nome que VOCÊ configurou no Render
+const mongoURI = process.env.mongo_uri || process.env.database_url || process.env.db_connection;
 
-// Usar rotas de autenticação
-app.use("/api/auth", authRoutes);
+mongoose.connect(mongoURI)
+  .then(() => console.log("MongoDB conectado"))
+  .catch(err => console.error("Erro MongoDB:", err));
 
-// Servir arquivos da pasta public
+// Servir arquivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
 
 // Rotas principais
@@ -46,6 +39,6 @@ app.get("/dashboard.html", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "dashboard.html"));
 });
 
-// Iniciar servidor
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
+// Porta usando a variável que VOCÊ colocou
+const PORT = process.env.port || 10000;
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
