@@ -2,43 +2,36 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import mongoose from "mongoose";
+import cors from "cors";
 
 const app = express();
 
-// Corrigir __dirname
+// __dirname para ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// JSON
+// Middlewares
+app.use(cors());
 app.use(express.json());
 
-// Conectar ao Mongo usando o nome que VOCÊ configurou no Render
-const mongoURI = process.env.mongo_uri || process.env.database_url || process.env.db_connection;
+// Conexão MongoDB
+const mongoURI = process.env.mongo_uri;
 
-mongoose.connect(mongoURI)
-  .then(() => console.log("MongoDB conectado"))
-  .catch(err => console.error("Erro MongoDB:", err));
+mongoose.connect(mongoURI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("✅ MongoDB conectado"))
+.catch(err => console.log("❌ Erro Mongo:", err));
 
 // Servir arquivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
 
-// Rotas principais
+// Rota principal
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-app.get("/login.html", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "login.html"));
-});
-
-app.get("/register.html", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "register.html"));
-});
-
-app.get("/dashboard.html", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "dashboard.html"));
-});
-
-// Porta usando a variável que VOCÊ colocou
-const PORT = process.env.port || 10000;
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+// Iniciar servidor
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
