@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-// Usar a variável de ambiente
 const mongoURI = process.env.MONGO_URI;
 
 mongoose.connect(mongoURI, {
