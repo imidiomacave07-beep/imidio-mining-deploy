@@ -1,97 +1,84 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
-import basicAuth from 'express-basic-auth';
+import express from "express";
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs"; // <--- Agora seguro no Render
+import cors from "cors";
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
-// --- Conexão com MongoDB Atlas ---
-const mongoURI = process.env.MONGO_URI;
+// ----------------------------
+// 1. Conexão MongoDB
+// ----------------------------
+const MONGO_URI = process.env.MONGO_URI;
 
-mongoose.connect(mongoURI)
-  .then(() => console.log('MongoDB conectado!'))
-  .catch(err => console.error('Erro MongoDB:', err.message));
+mongoose
+  .connect(MONGO_URI)
+  .then(() => console.log("MongoDB conectado com sucesso!"))
+  .catch((err) => console.error("Erro MongoDB:", err));
 
-// --- Schemas e Models ---
+// ----------------------------
+// 2. Modelo do Usuário
+// ----------------------------
 const UserSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
+  nome: String,
+  email: String,
+  senha: String,
 });
 
-const MiningSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  amount: { type: Number, required: true },
-  minedAt: { type: Date, default: Date.now }
+const User = mongoose.model("User", UserSchema);
+
+// ----------------------------
+// 3. Rota para criar conta
+// ----------------------------
+app.post("/register", async (req, res) => {
+  try {
+    const { nome, email, senha } = req.body;
+
+    const senhaCriptografada = await bcrypt.hash(senha, 10);
+
+    const novoUser = new User({
+      nome,
+      email,
+      senha: senhaCriptografada,
+    });
+
+    await novoUser.save();
+    res.json({ sucesso: true, mensagem: "Conta criada com sucesso!" });
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: "Erro ao criar conta" });
+  }
 });
 
-const User = mongoose.model('User', UserSchema);
-const Mining = mongoose.model('Mining', MiningSchema);
+// ----------------------------
+// 4. Rota para login
+// ----------------------------
+app.post("/login", async (req, res) => {
+  try {
+    const { email, senha } = req.body;
 
-// --- Middleware de autenticação básica ---
-app.use(basicAuth({
-  authorizeAsync: true,
-  authorizer: async (username, password, cb) => {
-    try {
-      const user = await User.findOne({ username });
-      if (!user) return cb(null, false);
-      const match = await bcrypt.compare(password, user.password);
-      cb(null, match);
-    } catch (err) {
-      cb(null, false);
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ erro: "Usuário não encontrado" });
     }
-  },
-  challenge: true
-}));
 
-// --- Rotas ---
-// Teste raiz
-app.get('/', (req, res) => {
-  res.send('Servidor da plataforma de mineração funcionando!');
-});
+    const senhaCorreta = await bcrypt.compare(senha, user.senha);
 
-// Criar usuário
-app.post('/user', async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    if (!username || !password) return res.status(400).send({ success: false, error: 'Username e password obrigatórios' });
+    if (!senhaCorreta) {
+      return res.status(400).json({ erro: "Senha incorreta" });
+    }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ username, password: hashedPassword });
-    await user.save();
-    res.status(201).send({ success: true, userId: user._id, username: user.username });
-  } catch (err) {
-    res.status(500).send({ success: false, error: err.message });
+    res.json({ sucesso: true, mensagem: "Login bem-sucedido!" });
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: "Erro no login" });
   }
 });
 
-// Registrar mineração
-app.post('/mine', async (req, res) => {
-  try {
-    const { userId, amount } = req.body;
-    if (!userId || !amount) return res.status(400).send({ success: false, error: 'userId e amount obrigatórios' });
-
-    const mining = new Mining({ userId, amount });
-    await mining.save();
-    res.status(201).send({ success: true, mining });
-  } catch (err) {
-    res.status(500).send({ success: false, error: err.message });
-  }
-});
-
-// Consultar mineração de um usuário
-app.get('/mining/:userId', async (req, res) => {
-  try {
-    const miningData = await Mining.find({ userId: req.params.userId }).sort({ minedAt: -1 });
-    res.status(200).send({ success: true, miningData });
-  } catch (err) {
-    res.status(500).send({ success: false, error: err.message });
-  }
-});
-
-// --- Porta do Render ---
+// ----------------------------
+// 5. Porta Render
+// ----------------------------
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+app.listen(PORT, () => console.log("Servidor rodando na porta " + PORT));
