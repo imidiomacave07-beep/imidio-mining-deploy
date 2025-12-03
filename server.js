@@ -1,61 +1,72 @@
 import express from "express";
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs";   // CORRETO — única versão permitida no Render
 import cors from "cors";
-import path from "path";
-import { fileURLToPath } from "url";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Fix para __dirname em ES module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// ----------------------------
+// 1. Conexão MongoDB
+// ----------------------------
+const MONGO_URI = process.env.MONGO_URI;
 
-// Conexão MongoDB
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(MONGO_URI)
   .then(() => console.log("MongoDB conectado com sucesso!"))
   .catch((err) => console.error("Erro MongoDB:", err));
 
-// Modelo User
+// ----------------------------
+// 2. Modelo do Usuário
+// ----------------------------
 const UserSchema = new mongoose.Schema({
   nome: String,
   email: { type: String, unique: true },
   senha: String,
 });
+
 const User = mongoose.model("User", UserSchema);
 
-// Página inicial
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
-// Registro
+// ----------------------------
+// 3. Rota para criar conta (register)
+// ----------------------------
 app.post("/register", async (req, res) => {
-  const { nome, email, senha } = req.body;
+  try {
+    const { nome, email, senha } = req.body;
 
-  const exists = await User.findOne({ email });
-  if (exists) return res.status(400).json({ message: "Usuário já existe" });
+    const existe = await User.findOne({ email });
+    if (existe) {
+      return res.status(400).json({ erro: "Email já registrado" });
+    }
 
-  const senhaHash = await bcrypt.hash(senha, 10);
+    const senhaHash = await bcrypt.hash(senha, 10);
 
-  await User.create({
-    nome,
-    email,
-    senha: senhaHash,
-  });
+    const novo = new User({
+      nome,
+      email,
+      senha: senhaHash,
+    });
 
-  res.json({ message: "Usuário criado com sucesso" });
+    await novo.save();
+
+    res.status(201).json({ mensagem: "Usuário registrado com sucesso!" });
+  } catch (err) {
+    res.status(500).json({ erro: "Erro ao registrar usuário", detalhe: err });
+  }
 });
 
-// Arquivos estáticos
-app.use(express.static(path.join(__dirname, "public")));
+// ----------------------------
+// 4. Rota inicial
+// ----------------------------
+app.get("/", (req, res) => {
+  res.send("Servidor funcionando! 🚀");
+});
 
-// Porta Render
+// ----------------------------
+// 5. Iniciar servidor
+// ----------------------------
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+app.listen(PORT, () => {
+  console.log("Servidor rodando na porta " + PORT);
+});
