@@ -1,71 +1,62 @@
 import express from "express";
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs"; // ✅ Corrigido para bcryptjs
+import bcrypt from "bcrypt";
+import path from "path";
+import { fileURLToPath } from "url";
 import cors from "cors";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-// ----------------------------
-// 1. Conexão MongoDB
-// ----------------------------
-const MONGO_URI = process.env.MONGO_URI;
+// Fix para __dirname em ES Module:
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-mongoose
-  .connect(MONGO_URI)
+// Conexão MongoDB
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB conectado com sucesso!"))
-  .catch((err) => console.error("Erro MongoDB:", err));
+  .catch(err => console.error("Erro ao conectar MongoDB:", err));
 
-// ----------------------------
-// 2. Modelo do Usuário
-// ----------------------------
+// Modelo de usuário
 const UserSchema = new mongoose.Schema({
   nome: String,
-  email: String,
-  senha: String,
+  email: { type: String, unique: true },
+  senha: String
 });
-
 const User = mongoose.model("User", UserSchema);
 
-// ----------------------------
-// 3. Rota para criar conta
-// ----------------------------
-app.post("/register", async (req, res) => {
-  try {
-    const { nome, email, senha } = req.body;
-
-    // Verifica se o usuário já existe
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ message: "Usuário já existe" });
-    }
-
-    // Hash da senha
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(senha, salt);
-
-    const user = new User({ nome, email, senha: hashedPassword });
-    await user.save();
-
-    res.status(201).json({ message: "Usuário criado com sucesso!" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Erro interno do servidor" });
-  }
-});
-
-// ----------------------------
-// 4. Rota de teste simples
-// ----------------------------
+// Rota inicial → SERVE O FRONTEND
 app.get("/", (req, res) => {
-  res.send("Servidor funcionando!");
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// ----------------------------
-// 5. Inicia servidor
-// ----------------------------
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+// Registro de usuário
+app.post("/register", async (req, res) => {
+  const { nome, email, senha } = req.body;
+
+  const usuarioExiste = await User.findOne({ email });
+  if (usuarioExiste) return res.status(400).json({ message: "Usuário já existe" });
+
+  const senhaHash = await bcrypt.hash(senha, 10);
+
+  const novoUsuario = new User({
+    nome,
+    email,
+    senha: senhaHash
+  });
+
+  await novoUsuario.save();
+
+  res.json({ message: "Usuário criado com sucesso!" });
 });
+
+// Arquivos estáticos
+app.use(express.static(path.join(__dirname, "public")));
+
+// Porta Render
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
