@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs"; // <--- Agora seguro no Render
+import bcrypt from "bcryptjs";
 import cors from "cors";
 
 const app = express();
@@ -22,63 +22,71 @@ mongoose
 // ----------------------------
 const UserSchema = new mongoose.Schema({
   nome: String,
-  email: String,
+  email: { type: String, unique: true },
   senha: String,
 });
 
 const User = mongoose.model("User", UserSchema);
 
 // ----------------------------
-// 3. Rota para criar conta
+// 3. Rota raiz para teste
+// ----------------------------
+app.get("/", (req, res) => {
+  res.send("Servidor rodando! Backend ativo!");
+});
+
+// ----------------------------
+// 4. Rota para criar conta
 // ----------------------------
 app.post("/register", async (req, res) => {
   try {
     const { nome, email, senha } = req.body;
 
-    const senhaCriptografada = await bcrypt.hash(senha, 10);
+    // Verifica se o usuário já existe
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ msg: "Usuário já existe." });
 
-    const novoUser = new User({
-      nome,
-      email,
-      senha: senhaCriptografada,
-    });
+    // Criptografa a senha
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(senha, salt);
 
-    await novoUser.save();
-    res.json({ sucesso: true, mensagem: "Conta criada com sucesso!" });
-  } catch (erro) {
-    console.error(erro);
-    res.status(500).json({ erro: "Erro ao criar conta" });
+    // Cria novo usuário
+    const newUser = new User({ nome, email, senha: hashedPassword });
+    await newUser.save();
+
+    res.status(201).json({ msg: "Usuário criado com sucesso!" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Erro interno do servidor." });
   }
 });
 
 // ----------------------------
-// 4. Rota para login
+// 5. Rota de login
 // ----------------------------
 app.post("/login", async (req, res) => {
   try {
     const { email, senha } = req.body;
 
+    // Verifica usuário
     const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ msg: "Usuário não encontrado." });
 
-    if (!user) {
-      return res.status(400).json({ erro: "Usuário não encontrado" });
-    }
+    // Verifica senha
+    const isMatch = await bcrypt.compare(senha, user.senha);
+    if (!isMatch) return res.status(400).json({ msg: "Senha incorreta." });
 
-    const senhaCorreta = await bcrypt.compare(senha, user.senha);
-
-    if (!senhaCorreta) {
-      return res.status(400).json({ erro: "Senha incorreta" });
-    }
-
-    res.json({ sucesso: true, mensagem: "Login bem-sucedido!" });
-  } catch (erro) {
-    console.error(erro);
-    res.status(500).json({ erro: "Erro no login" });
+    res.status(200).json({ msg: "Login realizado com sucesso!" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Erro interno do servidor." });
   }
 });
 
 // ----------------------------
-// 5. Porta Render
+// 6. Start servidor
 // ----------------------------
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log("Servidor rodando na porta " + PORT));
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
