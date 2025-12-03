@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs"; // ✅ Corrigido para bcryptjs
 import cors from "cors";
 
 const app = express();
@@ -22,69 +22,48 @@ mongoose
 // ----------------------------
 const UserSchema = new mongoose.Schema({
   nome: String,
-  email: { type: String, unique: true },
+  email: String,
   senha: String,
 });
 
 const User = mongoose.model("User", UserSchema);
 
 // ----------------------------
-// 3. Rota raiz para teste
-// ----------------------------
-app.get("/", (req, res) => {
-  res.send("Servidor rodando! Backend ativo!");
-});
-
-// ----------------------------
-// 4. Rota para criar conta
+// 3. Rota para criar conta
 // ----------------------------
 app.post("/register", async (req, res) => {
   try {
     const { nome, email, senha } = req.body;
 
     // Verifica se o usuário já existe
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ msg: "Usuário já existe." });
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({ message: "Usuário já existe" });
+    }
 
-    // Criptografa a senha
+    // Hash da senha
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(senha, salt);
 
-    // Cria novo usuário
-    const newUser = new User({ nome, email, senha: hashedPassword });
-    await newUser.save();
+    const user = new User({ nome, email, senha: hashedPassword });
+    await user.save();
 
-    res.status(201).json({ msg: "Usuário criado com sucesso!" });
+    res.status(201).json({ message: "Usuário criado com sucesso!" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ msg: "Erro interno do servidor." });
+    res.status(500).json({ message: "Erro interno do servidor" });
   }
 });
 
 // ----------------------------
-// 5. Rota de login
+// 4. Rota de teste simples
 // ----------------------------
-app.post("/login", async (req, res) => {
-  try {
-    const { email, senha } = req.body;
-
-    // Verifica usuário
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ msg: "Usuário não encontrado." });
-
-    // Verifica senha
-    const isMatch = await bcrypt.compare(senha, user.senha);
-    if (!isMatch) return res.status(400).json({ msg: "Senha incorreta." });
-
-    res.status(200).json({ msg: "Login realizado com sucesso!" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ msg: "Erro interno do servidor." });
-  }
+app.get("/", (req, res) => {
+  res.send("Servidor funcionando!");
 });
 
 // ----------------------------
-// 6. Start servidor
+// 5. Inicia servidor
 // ----------------------------
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
