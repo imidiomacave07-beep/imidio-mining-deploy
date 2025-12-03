@@ -5,22 +5,22 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const app = express();
 app.use(express.json());
 app.use(cors());
 
 // ----------------------------
-// Servir arquivos estáticos (HTML, JS, CSS)
+// Servir arquivos estáticos
 // ----------------------------
-app.use(express.static(path.join(__dirname, "public"))); // pasta onde está o index.html
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, "public")));
 
 // ----------------------------
 // Conexão MongoDB
 // ----------------------------
 const MONGO_URI = process.env.MONGO_URI;
+
 mongoose
   .connect(MONGO_URI)
   .then(() => console.log("MongoDB conectado com sucesso!"))
@@ -31,27 +31,27 @@ mongoose
 // ----------------------------
 const UserSchema = new mongoose.Schema({
   nome: String,
-  email: { type: String, unique: true },
+  email: String,
   senha: String,
-  saldo: { type: Number, default: 0 },
+  saldo: { type: Number, default: 0 }
 });
 
 const User = mongoose.model("User", UserSchema);
 
 // ----------------------------
-// Rotas de API
+// Rotas
 // ----------------------------
 
-// Registrar usuário
+// Criar conta
 app.post("/register", async (req, res) => {
   try {
     const { nome, email, senha } = req.body;
-    const hashedSenha = await bcrypt.hash(senha, 10);
-    const novoUsuario = new User({ nome, email, senha: hashedSenha });
-    await novoUsuario.save();
+    const hashed = await bcrypt.hash(senha, 10);
+    const user = new User({ nome, email, senha: hashed });
+    await user.save();
     res.json({ message: "Usuário registrado com sucesso!" });
   } catch (err) {
-    res.status(400).json({ error: "Erro ao registrar usuário", details: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -60,30 +60,31 @@ app.post("/login", async (req, res) => {
   try {
     const { email, senha } = req.body;
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ error: "Email não encontrado" });
-
-    const isMatch = await bcrypt.compare(senha, user.senha);
-    if (!isMatch) return res.status(400).json({ error: "Senha incorreta" });
-
+    if (!user) return res.status(400).json({ error: "Usuário não encontrado" });
+    const match = await bcrypt.compare(senha, user.senha);
+    if (!match) return res.status(400).json({ error: "Senha incorreta" });
     res.json({ message: "Login realizado com sucesso!", saldo: user.saldo, nome: user.nome });
   } catch (err) {
-    res.status(500).json({ error: "Erro no login", details: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
 
-// Dashboard
-app.get("/dashboard/:email", async (req, res) => {
+// Endpoint teste para minerar
+app.post("/mine", async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.params.email });
-    if (!user) return res.status(404).json({ error: "Usuário não encontrado" });
-    res.json({ nome: user.nome, saldo: user.saldo });
+    const { email, coins } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ error: "Usuário não encontrado" });
+    user.saldo += coins;
+    await user.save();
+    res.json({ message: "Mineração concluída!", saldo: user.saldo });
   } catch (err) {
-    res.status(500).json({ error: "Erro ao carregar dashboard", details: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
 
 // ----------------------------
-// Servidor
+// Iniciar servidor
 // ----------------------------
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
