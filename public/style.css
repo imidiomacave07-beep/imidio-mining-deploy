@@ -1,18 +1,27 @@
-body {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Imidio Mining</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Imidio Mining Platform</h1>
 
-h1 {
-  color: #333;
-}
+    <div class="form-container">
+      <h2>Registrar Usuário</h2>
+      <form id="registerForm">
+        <input type="text" id="nome" placeholder="Nome" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="senha" placeholder="Senha" required />
+        <button type="submit">Registrar</button>
+      </form>
+      <p id="message"></p>
+    </div>
+  </div>
 
-nav button {
-  margin-right: 10px;
-  padding: 10px 15px;
-  cursor: pointer;
-}
-
-section {
-  margin-top: 20px;
-}
+  <script src="script.js"></script>
+</body>
+</html>
