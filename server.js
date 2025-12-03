@@ -3,8 +3,9 @@ import mongoose from 'mongoose';
 
 const app = express();
 
-// MongoDB connection
-mongoose.connect(process.env.MONGO_URI)
+// Conectar ao MongoDB
+const mongoURI = process.env.MONGO_URI;
+mongoose.connect(mongoURI)
   .then(() => console.log('MongoDB conectado!'))
   .catch(err => console.error('Erro MongoDB:', err));
 
