@@ -2,87 +2,123 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Imidio Mining Platform</title>
-<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f0f2f5; }
+  h1, h2 { color: #333; }
+  input, button { margin: 5px 0; padding: 8px; width: 200px; }
+  #dashboard { margin-top: 20px; }
+  canvas { margin-top: 10px; }
+</style>
 </head>
 <body>
 <h1>Imidio Mining Platform</h1>
 
-<div id="register">
+<div id="auth">
   <h2>Registrar Usuário</h2>
-  <input type="text" id="nome" placeholder="Nome">
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="senha" placeholder="Senha">
+  <input id="regName" placeholder="Nome"><br>
+  <input id="regEmail" placeholder="Email"><br>
+  <input id="regPass" placeholder="Senha" type="password"><br>
   <button onclick="register()">Registrar</button>
-  <p id="register-msg"></p>
-</div>
 
-<div id="login">
   <h2>Login</h2>
-  <input type="email" id="login-email" placeholder="Email">
-  <input type="password" id="login-senha" placeholder="Senha">
+  <input id="logEmail" placeholder="Email"><br>
+  <input id="logPass" placeholder="Senha" type="password"><br>
   <button onclick="login()">Entrar</button>
-  <p id="login-msg"></p>
 </div>
 
 <div id="dashboard" style="display:none;">
-  <h2>Bem-vindo, <span id="user-nome"></span>!</h2>
-  <p>Saldo de mineração: <span id="user-saldo"></span> Coins</p>
+  <h2>Bem-vindo, <span id="userName"></span>!</h2>
+  <p>Saldo de mineração: <span id="balance">0</span> Coins</p>
   <button onclick="mine()">Minerar 10 Coins</button>
+
+  <h3>Histórico de mineração</h3>
+  <canvas id="miningChart" width="400" height="200"></canvas>
+  <br>
   <button onclick="logout()">Sair</button>
 </div>
 
 <script>
+let userId = null;
+let userName = "";
+
+// Registrar usuário
 async function register() {
-  const nome = document.getElementById("nome").value;
-  const email = document.getElementById("email").value;
-  const senha = document.getElementById("senha").value;
+  const nome = document.getElementById("regName").value;
+  const email = document.getElementById("regEmail").value;
+  const senha = document.getElementById("regPass").value;
+
   const res = await fetch("/register", {
     method: "POST",
-    headers: {"Content-Type":"application/json"},
+    headers: {'Content-Type':'application/json'},
     body: JSON.stringify({ nome, email, senha })
   });
-  const data = await res.json();
-  document.getElementById("register-msg").innerText = data.message || data.error;
+  alert((await res.json()).message);
 }
 
+// Login
 async function login() {
-  const email = document.getElementById("login-email").value;
-  const senha = document.getElementById("login-senha").value;
+  const email = document.getElementById("logEmail").value;
+  const senha = document.getElementById("logPass").value;
+
   const res = await fetch("/login", {
     method: "POST",
-    headers: {"Content-Type":"application/json"},
+    headers: {'Content-Type':'application/json'},
     body: JSON.stringify({ email, senha })
   });
   const data = await res.json();
-  if (data.error) {
-    document.getElementById("login-msg").innerText = data.error;
-  } else {
-    document.getElementById("login-msg").innerText = data.message;
+  if(data.userId){
+    userId = data.userId;
+    userName = email.split("@")[0];
+    document.getElementById("userName").innerText = userName;
+    document.getElementById("auth").style.display = "none";
     document.getElementById("dashboard").style.display = "block";
-    document.getElementById("register").style.display = "none";
-    document.getElementById("login").style.display = "none";
-    document.getElementById("user-nome").innerText = data.nome;
-    document.getElementById("user-saldo").innerText = data.saldo;
-    window.currentUser = email;
+    loadBalance();
+    loadHistory();
+  } else {
+    alert(data.error);
   }
 }
 
+// Minerar coins
 async function mine() {
-  const res = await fetch("/mine", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({ email: window.currentUser, coins: 10 })
-  });
+  const res = await fetch(`/mine/${userId}`, { method: "POST" });
   const data = await res.json();
-  document.getElementById("user-saldo").innerText = data.saldo;
+  document.getElementById("balance").innerText = data.newBalance;
+  loadHistory();
 }
+
+// Atualizar saldo
+async function loadBalance() {
+  const res = await fetch(`/mining-history/${userId}`);
+  const logs = await res.json();
+  const total = logs.reduce((sum, l) => sum + l.amount, 0);
+  document.getElementById("balance").innerText = total;
+}
+
+// Histórico e gráfico
+async function loadHistory() {
+  const res = await fetch(`/mining-history/${userId}`);
+  const logs = await res.json();
+
+  const labels = logs.map(l => new Date(l.date).toLocaleString());
+  const data = logs.map(l => l.amount);
+
+  const ctx = document.getElementById('miningChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Coins Minerados', data }] },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+
+// Logout
 function logout() {
-  window.currentUser = null;
+  userId = null;
+  userName = "";
+  document.getElementById("auth").style.display = "block";
   document.getElementById("dashboard").style.display = "none";
-  document.getElementById("register").style.display = "block";
-  document.getElementById("login").style.display = "block";
 }
 </script>
 </body>
