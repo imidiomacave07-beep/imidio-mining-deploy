@@ -1,125 +1,36 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<title>Imidio Mining Platform</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: #f0f2f5; }
-  h1, h2 { color: #333; }
-  input, button { margin: 5px 0; padding: 8px; width: 200px; }
-  #dashboard { margin-top: 20px; }
-  canvas { margin-top: 10px; }
-</style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Imidio Crypto Mining — Entrar</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<h1>Imidio Mining Platform</h1>
+<header class="nav">
+  <div class="brand">Imidio Crypto Mining</div>
+  <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="plans.html">Planos</a>
+  </nav>
+</header>
 
-<div id="auth">
-  <h2>Registrar Usuário</h2>
-  <input id="regName" placeholder="Nome"><br>
-  <input id="regEmail" placeholder="Email"><br>
-  <input id="regPass" placeholder="Senha" type="password"><br>
-  <button onclick="register()">Registrar</button>
+<main class="center">
+  <div class="card auth-card">
+    <h2>Entrar</h2>
+    <input id="loginEmail" placeholder="Email" />
+    <input id="loginPass" placeholder="Senha" type="password" />
+    <button id="btnLogin">Entrar</button>
+    <p class="muted">ou</p>
+    <h3>Criar conta</h3>
+    <input id="regName" placeholder="Nome" />
+    <input id="regEmail" placeholder="Email" />
+    <input id="regPass" placeholder="Senha" type="password" />
+    <button id="btnRegister">Registrar</button>
+    <p id="authMsg" class="muted"></p>
+  </div>
+</main>
 
-  <h2>Login</h2>
-  <input id="logEmail" placeholder="Email"><br>
-  <input id="logPass" placeholder="Senha" type="password"><br>
-  <button onclick="login()">Entrar</button>
-</div>
-
-<div id="dashboard" style="display:none;">
-  <h2>Bem-vindo, <span id="userName"></span>!</h2>
-  <p>Saldo de mineração: <span id="balance">0</span> Coins</p>
-  <button onclick="mine()">Minerar 10 Coins</button>
-
-  <h3>Histórico de mineração</h3>
-  <canvas id="miningChart" width="400" height="200"></canvas>
-  <br>
-  <button onclick="logout()">Sair</button>
-</div>
-
-<script>
-let userId = null;
-let userName = "";
-
-// Registrar usuário
-async function register() {
-  const nome = document.getElementById("regName").value;
-  const email = document.getElementById("regEmail").value;
-  const senha = document.getElementById("regPass").value;
-
-  const res = await fetch("/register", {
-    method: "POST",
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ nome, email, senha })
-  });
-  alert((await res.json()).message);
-}
-
-// Login
-async function login() {
-  const email = document.getElementById("logEmail").value;
-  const senha = document.getElementById("logPass").value;
-
-  const res = await fetch("/login", {
-    method: "POST",
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ email, senha })
-  });
-  const data = await res.json();
-  if(data.userId){
-    userId = data.userId;
-    userName = email.split("@")[0];
-    document.getElementById("userName").innerText = userName;
-    document.getElementById("auth").style.display = "none";
-    document.getElementById("dashboard").style.display = "block";
-    loadBalance();
-    loadHistory();
-  } else {
-    alert(data.error);
-  }
-}
-
-// Minerar coins
-async function mine() {
-  const res = await fetch(`/mine/${userId}`, { method: "POST" });
-  const data = await res.json();
-  document.getElementById("balance").innerText = data.newBalance;
-  loadHistory();
-}
-
-// Atualizar saldo
-async function loadBalance() {
-  const res = await fetch(`/mining-history/${userId}`);
-  const logs = await res.json();
-  const total = logs.reduce((sum, l) => sum + l.amount, 0);
-  document.getElementById("balance").innerText = total;
-}
-
-// Histórico e gráfico
-async function loadHistory() {
-  const res = await fetch(`/mining-history/${userId}`);
-  const logs = await res.json();
-
-  const labels = logs.map(l => new Date(l.date).toLocaleString());
-  const data = logs.map(l => l.amount);
-
-  const ctx = document.getElementById('miningChart').getContext('2d');
-  new Chart(ctx, {
-    type: 'bar',
-    data: { labels, datasets: [{ label: 'Coins Minerados', data }] },
-    options: { responsive: true, maintainAspectRatio: false }
-  });
-}
-
-// Logout
-function logout() {
-  userId = null;
-  userName = "";
-  document.getElementById("auth").style.display = "block";
-  document.getElementById("dashboard").style.display = "none";
-}
-</script>
+<script src="script.js"></script>
 </body>
 </html>
