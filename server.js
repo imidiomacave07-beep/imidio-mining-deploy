@@ -1,18 +1,18 @@
-const express = require('express');
-const path = require('path');
+const express = require("express");
+const path = require("path");
 const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const PORT = process.env.PORT || 10000;
 
-// SERVE A PASTA PUBLIC
-app.use(express.static(path.join(__dirname, 'public')));
+// Servir ficheiros estáticos da pasta "public"
+app.use(express.static(path.join(__dirname, "public")));
 
-// ROTA PADRÃO
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Página principal
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// PORTA DO RENDER
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+// Iniciar servidor
+app.listen(PORT, () => {
+  console.log(`Servidor a correr na porta ${PORT}`);
+});
