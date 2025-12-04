@@ -2,114 +2,32 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Imidio Crypto Mining - Planos</title>
-<style>
-  body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
-  h1, h2 { color: #0077cc; }
-  .plans { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; }
-  .plan { background: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; width: 200px; text-align: center; }
-  .plan h3 { margin-top: 0; }
-  button { padding: 10px 15px; margin-top: 10px; cursor: pointer; border: none; border-radius: 5px; background-color: #0077cc; color: #fff; }
-  button:hover { background-color: #005fa3; }
-  #withdrawSection { margin-top: 30px; }
-  #withdrawAmount { width: 100px; padding: 5px; }
-</style>
+<title>Planos - Imidio Mining</title>
 </head>
 <body>
-
-<h1>Imidio Crypto Mining</h1>
-<nav>
-  <a href="dashboard.html">Dashboard</a> |
-  <a href="history.html">Histórico</a> |
-  <a href="plans.html">Planos</a> |
-  <a href="profile.html">Perfil</a>
-</nav>
-
-<h2>Escolha seu Plano</h2>
-<div class="plans">
-  <div class="plan">
-    <h3>Básico</h3>
-    <p>Valor: $10</p>
-    <p>+10 Coins</p>
-    <button onclick="buyPlan('Basico', 10, 10)">Comprar</button>
-  </div>
-  <div class="plan">
-    <h3>Intermediário</h3>
-    <p>Valor: $50</p>
-    <p>+60 Coins</p>
-    <button onclick="buyPlan('Intermediario', 50, 60)">Comprar</button>
-  </div>
-  <div class="plan">
-    <h3>Avançado</h3>
-    <p>Valor: $200</p>
-    <p>+300 Coins</p>
-    <button onclick="buyPlan('Avancado', 200, 300)">Comprar</button>
-  </div>
-  <div class="plan">
-    <h3>Pro</h3>
-    <p>Valor: $500</p>
-    <p>+900 Coins</p>
-    <button onclick="buyPlan('Pro', 500, 900)">Comprar</button>
-  </div>
-  <div class="plan">
-    <h3>Premium</h3>
-    <p>Valor: $1000</p>
-    <p>+2000 Coins</p>
-    <button onclick="buyPlan('Premium', 1000, 2000)">Comprar</button>
-  </div>
-  <div class="plan">
-    <h3>VIP</h3>
-    <p>Valor: $5000</p>
-    <p>+10000 Coins</p>
-    <button onclick="buyPlan('VIP', 5000, 10000)">Comprar</button>
-  </div>
+<h1>Escolha seu Plano</h1>
+<div>
+  <h2>Básico</h2>
+  <p>$10 / clique</p>
+  <button onclick="buy('Basico', 10)">Comprar</button>
+</div>
+<div>
+  <h2>Pro</h2>
+  <p>$100 / clique</p>
+  <button onclick="buy('Pro', 100)">Comprar</button>
+</div>
+<div>
+  <h2>Premium</h2>
+  <p>$5000 / clique</p>
+  <button onclick="buy('Premium', 5000)">Comprar</button>
 </div>
 
-<div id="withdrawSection">
-  <h2>Withdraw</h2>
-  <input type="number" id="withdrawAmount" placeholder="Coins" min="1">
-  <button onclick="withdraw()">Sacar</button>
-</div>
+<a href="dashboard.html">Voltar</a>
 
 <script>
-let userId = localStorage.getItem('userId'); // Certifique-se que o userId está salvo no login
-
-async function buyPlan(planName, usdAmount, coins) {
-  if (!userId) { alert('Faça login primeiro'); return; }
-
-  const res = await fetch(`/buy-plan/${userId}`, {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ planName, usdAmount, coins })
-  });
-
-  const data = await res.json();
-  if(data.success) {
-    alert(`Plano ${planName} comprado com sucesso! Novo saldo: ${data.newBalance} Coins`);
-  } else {
-    alert(`Erro: ${data.error}`);
-  }
-}
-
-async function withdraw() {
-  const amount = parseInt(document.getElementById('withdrawAmount').value);
-  if (!userId) { alert('Faça login primeiro'); return; }
-  if (!amount || amount <= 0) { alert('Informe um valor válido'); return; }
-
-  const res = await fetch(`/withdraw/${userId}`, {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ amount })
-  });
-
-  const data = await res.json();
-  if(data.success) {
-    alert(`Saque realizado com sucesso! Novo saldo: ${data.newBalance} Coins`);
-  } else {
-    alert(`Erro: ${data.error}`);
-  }
+function buy(plan, amount) {
+  alert(`Você comprou o plano ${plan} por $${amount}`);
 }
 </script>
-
 </body>
 </html>
