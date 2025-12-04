@@ -2,16 +2,11 @@ import express from "express";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import cors from "cors";
-import path from "path";
-import { fileURLToPath } from "url";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
-
-// Para trabalhar com __dirname no ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+app.use(express.static('public')); // Serve arquivos estáticos (HTML, CSS, JS)
 
 // ----------------------------
 // 1. Conexão MongoDB
@@ -31,88 +26,86 @@ const UserSchema = new mongoose.Schema({
   email: String,
   senha: String,
   balance: { type: Number, default: 0 },
+  miningHistory: [{ amount: Number, date: { type: Date, default: Date.now } }]
 });
 
 const User = mongoose.model("User", UserSchema);
 
 // ----------------------------
-// 3. Rota para criar conta
+// 3. Rotas
 // ----------------------------
+
+// Registro
 app.post("/register", async (req, res) => {
   try {
     const { nome, email, senha } = req.body;
     const hashedPassword = await bcrypt.hash(senha, 10);
+
+    const existing = await User.findOne({ email });
+    if (existing) return res.json({ error: "Usuário já existe" });
+
     const user = new User({ nome, email, senha: hashedPassword });
     await user.save();
     res.json({ message: "Usuário registrado com sucesso!" });
   } catch (err) {
-    res.status(500).json({ error: "Erro ao registrar usuário" });
+    res.json({ error: err.message });
   }
 });
 
-// ----------------------------
-// 4. Rota de login
-// ----------------------------
+// Login
 app.post("/login", async (req, res) => {
   try {
     const { email, senha } = req.body;
     const user = await User.findOne({ email });
     if (!user) return res.json({ error: "Usuário não encontrado" });
 
-    const match = await bcrypt.compare(senha, user.senha);
-    if (!match) return res.json({ error: "Senha incorreta" });
+    const valid = await bcrypt.compare(senha, user.senha);
+    if (!valid) return res.json({ error: "Senha incorreta" });
 
-    res.json({ userId: user._id, nome: user.nome, balance: user.balance });
+    res.json({ userId: user._id });
   } catch (err) {
-    res.status(500).json({ error: "Erro ao fazer login" });
+    res.json({ error: err.message });
   }
 });
 
-// ----------------------------
-// 5. Rotas de mineração
-// ----------------------------
+// Minerar Coins
 app.post("/mine/:userId", async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
-    if (!user) return res.status(404).json({ error: "Usuário não encontrado" });
+    if (!user) return res.json({ error: "Usuário não encontrado" });
 
-    user.balance += 10; // minerando 10 Coins
+    const minedAmount = 10; // Coins por clique
+    user.balance += minedAmount;
+    user.miningHistory.push({ amount: minedAmount });
     await user.save();
 
     res.json({ newBalance: user.balance });
   } catch (err) {
-    res.status(500).json({ error: "Erro ao minerar" });
+    res.json({ error: err.message });
+  }
+});
+
+// Histórico de Mineração
+app.get("/mining-history/:userId", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.json([]);
+
+    res.json(user.miningHistory);
+  } catch (err) {
+    res.json([]);
   }
 });
 
 // ----------------------------
-// 6. Servir arquivos estáticos
+// 4. Servir Front-end
 // ----------------------------
-app.use(express.static(path.join(__dirname, "public")));
-
-// Rotas amigáveis
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/index.html"));
-});
-
-app.get("/dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/dashboard.html"));
-});
-
-app.get("/plans", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/plans.html"));
-});
-
-app.get("/profile", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/profile.html"));
-});
-
-app.get("/history", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/history.html"));
+  res.sendFile("index.html", { root: "./public" });
 });
 
 // ----------------------------
-// 7. Start do servidor
+// 5. Start Server
 // ----------------------------
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
