@@ -1,101 +1,88 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-<meta charset="UTF-8">
-<title>Imidio Mining Platform</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-<h1>Imidio Mining Platform</h1>
+import express from "express";
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
+import cors from "cors";
 
-<div id="auth">
-  <h2>Registrar Usuário</h2>
-  <input id="regName" placeholder="Nome">
-  <input id="regEmail" placeholder="Email">
-  <input id="regPass" placeholder="Senha" type="password">
-  <button onclick="register()">Registrar</button>
+const app = express();
+app.use(express.json());
+app.use(cors());
 
-  <h2>Login</h2>
-  <input id="logEmail" placeholder="Email">
-  <input id="logPass" placeholder="Senha" type="password">
-  <button onclick="login()">Entrar</button>
-</div>
+const MONGO_URI = process.env.MONGO_URI;
 
-<div id="dashboard" style="display:none;">
-  <h2>Bem-vindo, <span id="userName"></span>!</h2>
-  <p>Saldo de mineração: <span id="balance">0</span> Coins</p>
-  <button onclick="mine()">Minerar 10 Coins</button>
-  <h3>Histórico de mineração</h3>
-  <canvas id="miningChart" width="400" height="200"></canvas>
-  <button onclick="logout()">Sair</button>
-</div>
+mongoose
+  .connect(MONGO_URI)
+  .then(() => console.log("MongoDB conectado com sucesso!"))
+  .catch((err) => console.error("Erro MongoDB:", err));
 
-<script>
-let userId = null;
-let userName = "";
+const UserSchema = new mongoose.Schema({
+  nome: String,
+  email: String,
+  senha: String,
+  balance: { type: Number, default: 0 },
+});
 
-async function register() {
-  const nome = document.getElementById("regName").value;
-  const email = document.getElementById("regEmail").value;
-  const senha = document.getElementById("regPass").value;
+const MiningHistorySchema = new mongoose.Schema({
+  userId: mongoose.Schema.Types.ObjectId,
+  type: String, // 'mine' ou 'plan'
+  amount: Number,
+  date: { type: Date, default: Date.now },
+});
 
-  const res = await fetch("/register", {
-    method: "POST",
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ nome, email, senha })
-  });
-  alert((await res.json()).message);
-}
+const User = mongoose.model("User", UserSchema);
+const MiningHistory = mongoose.model("MiningHistory", MiningHistorySchema);
 
-async function login() {
-  const email = document.getElementById("logEmail").value;
-  const senha = document.getElementById("logPass").value;
+// Registro
+app.post("/register", async (req, res) => {
+  const { nome, email, senha } = req.body;
+  const hashedPassword = await bcrypt.hash(senha, 10);
+  const user = new User({ nome, email, senha: hashedPassword });
+  await user.save();
+  res.json({ message: "Usuário registrado com sucesso!" });
+});
 
-  const res = await fetch("/login", {
-    method: "POST",
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ email, senha })
-  });
-  const data = await res.json();
-  if(data.userId){
-    userId = data.userId;
-    userName = email.split("@")[0];
-    document.getElementById("userName").innerText = userName;
-    document.getElementById("auth").style.display = "none";
-    document.getElementById("dashboard").style.display = "block";
-    loadHistory();
-  } else {
-    alert(data.error);
-  }
-}
+// Login
+app.post("/login", async (req, res) => {
+  const { email, senha } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) return res.json({ error: "Usuário não encontrado!" });
+  const valid = await bcrypt.compare(senha, user.senha);
+  if (!valid) return res.json({ error: "Senha incorreta!" });
+  res.json({ userId: user._id, nome: user.nome, balance: user.balance });
+});
 
-async function mine() {
-  const res = await fetch(`/mine/${userId}`, { method: "POST" });
-  const data = await res.json();
-  document.getElementById("balance").innerText = data.newBalance;
-  loadHistory();
-}
+// Minerar
+app.post("/mine/:userId", async (req, res) => {
+  const user = await User.findById(req.params.userId);
+  user.balance += 10; // 10 Coins por clique
+  await user.save();
+  const log = new MiningHistory({ userId: user._id, type: "mine", amount: 10 });
+  await log.save();
+  res.json({ newBalance: user.balance });
+});
 
-async function loadHistory() {
-  const res = await fetch(`/mining-history/${userId}`);
-  const logs = await res.json();
+// Comprar planos
+app.post("/buy-plan/:userId", async (req, res) => {
+  const { plan } = req.body; // 'basico', 'pro', 'premium'
+  const user = await User.findById(req.params.userId);
+  let amount = 0;
 
-  const labels = logs.map(l => new Date(l.date).toLocaleString());
-  const data = logs.map(l => l.amount);
+  if (plan === "basico") amount = 10;
+  if (plan === "pro") amount = 50;
+  if (plan === "premium") amount = 150;
 
-  const ctx = document.getElementById('miningChart').getContext('2d');
-  new Chart(ctx, {
-    type: 'bar',
-    data: { labels, datasets: [{ label: 'Coins Minerados', data }] }
-  });
-}
+  user.balance += amount;
+  await user.save();
 
-function logout() {
-  userId = null;
-  userName = "";
-  document.getElementById("auth").style.display = "block";
-  document.getElementById("dashboard").style.display = "none";
-}
-</script>
-</body>
-</html>
+  const log = new MiningHistory({ userId: user._id, type: "plan", amount });
+  await log.save();
+
+  res.json({ newBalance: user.balance });
+});
+
+// Histórico
+app.get("/mining-history/:userId", async (req, res) => {
+  const logs = await MiningHistory.find({ userId: req.params.userId }).sort({ date: 1 });
+  res.json(logs);
+});
+
+app.listen(process.env.PORT || 10000, () => console.log("Servidor rodando na porta 10000"));
