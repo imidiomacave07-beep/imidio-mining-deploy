@@ -1,29 +1,46 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard | Imidio Mining</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Imidio Crypto Mining — Dashboard</title>
+<link rel="stylesheet" href="style.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+<header class="nav">
+  <div class="brand">Imidio Crypto Mining</div>
+  <nav>
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="history.html">Histórico</a>
+    <a href="plans.html">Planos</a>
+    <a href="profile.html">Perfil</a>
+  </nav>
+</header>
 
-  <header>
-    <h2>Imidio Mining</h2>
-    <div>
-      <span id="userName"></span>
-      <button id="logoutBtn" class="btn danger">Logout</button>
+<main class="container">
+  <div class="top-row">
+    <div class="card">
+      <h3 id="cardName">—</h3>
+      <p id="cardPlan" class="muted">Plano: —</p>
     </div>
-  </header>
+    <div class="card">
+      <h3 id="cardBalance">0</h3>
+      <p class="muted">Saldo (Coins)</p>
+    </div>
+    <div class="card">
+      <h3 id="cardAction">Minerar</h3>
+      <p class="muted">Clique para minerar com seu plano</p>
+      <button id="btnMine">Minerar 1x</button>
+    </div>
+  </div>
 
-  <section class="card">
-    <h3>Status da Mineração</h3>
-    <p id="statusText">Carregando...</p>
+  <div class="chart-card card">
+    <h3>Últimas minerações</h3>
+    <canvas id="miniChart"></canvas>
+  </div>
+</main>
 
-    <button id="startBtn" class="btn">Iniciar Mineração</button>
-    <button id="stopBtn" class="btn">Parar Mineração</button>
-  </section>
-
-  <script src="dashboard.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
