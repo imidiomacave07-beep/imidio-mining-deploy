@@ -2,91 +2,126 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Testes Plataforma Imidio Mining</title>
+<title>Checklist de Teste - Imidio Mining Platform</title>
 <style>
   body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
   table { border-collapse: collapse; width: 100%; background: #fff; }
   th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
   th { background: #0077cc; color: #fff; }
   td.status { text-align: center; }
-  button { padding: 5px 10px; cursor: pointer; }
+  button { padding: 5px 10px; cursor: pointer; margin: 0 2px; }
   .success { background-color: #4CAF50; color: white; border: none; }
   .fail { background-color: #f44336; color: white; border: none; }
 </style>
 </head>
 <body>
-<h1>Testes Plataforma Imidio Mining</h1>
+<h1>Checklist de Teste - Imidio Mining Platform</h1>
+<p>Marque ✅ ou ❌ enquanto testa cada funcionalidade.</p>
+
 <table>
   <thead>
     <tr>
       <th>Seção / Funcionalidade</th>
       <th>Teste</th>
-      <th>Esperado</th>
       <th>Status</th>
     </tr>
   </thead>
   <tbody>
+    <!-- Registro e Login -->
+    <tr>
+      <td>Registro</td>
+      <td>Criar usuário no MongoDB</td>
+      <td class="status">
+        <button class="success" onclick="mark(this,'✅')">✅</button>
+        <button class="fail" onclick="mark(this,'❌')">❌</button>
+      </td>
+    </tr>
+    <tr>
+      <td>Login</td>
+      <td>Login com usuário válido</td>
+      <td class="status">
+        <button class="success" onclick="mark(this,'✅')">✅</button>
+        <button class="fail" onclick="mark(this,'❌')">❌</button>
+      </td>
+    </tr>
+    <tr>
+      <td>Login</td>
+      <td>Mensagem de erro para login inválido</td>
+      <td class="status">
+        <button class="success" onclick="mark(this,'✅')">✅</button>
+        <button class="fail" onclick="mark(this,'❌')">❌</button>
+      </td>
+    </tr>
+
+    <!-- Dashboard -->
     <tr>
       <td>Dashboard</td>
-      <td>Nome do usuário aparece</td>
-      <td>Nome do usuário logado é exibido corretamente</td>
+      <td>Nome do usuário logado aparece</td>
       <td class="status">
-        <button class="success" onclick="mark(this, '✅')">✅</button>
-        <button class="fail" onclick="mark(this, '❌')">❌</button>
+        <button class="success" onclick="mark(this,'✅')">✅</button>
+        <button class="fail" onclick="mark(this,'❌')">❌</button>
       </td>
     </tr>
     <tr>
       <td>Dashboard</td>
-      <td>Saldo inicial de Coins</td>
-      <td>Saldo correto do MongoDB é mostrado</td>
+      <td>Saldo de Coins carregado corretamente</td>
       <td class="status">
-        <button class="success" onclick="mark(this, '✅')">✅</button>
-        <button class="fail" onclick="mark(this, '❌')">❌</button>
+        <button class="success" onclick="mark(this,'✅')">✅</button>
+        <button class="fail" onclick="mark(this,'❌')">❌</button>
       </td>
     </tr>
+    <tr>
+      <td>Dashboard</td>
+      <td>Minerar Coins atualiza saldo</td>
+      <td class="status">
+        <button class="success" onclick="mark(this,'✅')">✅</button>
+        <button class="fail" onclick="mark(this,'❌')">❌</button>
+      </td>
+    </tr>
+
+    <!-- Planos -->
     <tr>
       <td>Planos</td>
       <td>Todos os planos aparecem</td>
-      <td>Básico, Pro, Premium com valores em USD</td>
       <td class="status">
-        <button class="success" onclick="mark(this, '✅')">✅</button>
-        <button class="fail" onclick="mark(this, '❌')">❌</button>
+        <button class="success" onclick="mark(this,'✅')">✅</button>
+        <button class="fail" onclick="mark(this,'❌')">❌</button>
       </td>
     </tr>
     <tr>
       <td>Planos</td>
-      <td>Valor do plano correto</td>
-      <td>Valores até $5000</td>
+      <td>Valores corretos em USD até $5000</td>
       <td class="status">
-        <button class="success" onclick="mark(this, '✅')">✅</button>
-        <button class="fail" onclick="mark(this, '❌')">❌</button>
+        <button class="success" onclick="mark(this,'✅')">✅</button>
+        <button class="fail" onclick="mark(this,'❌')">❌</button>
       </td>
     </tr>
+    <tr>
+      <td>Planos</td>
+      <td>Comprar plano atualiza saldo e histórico</td>
+      <td class="status">
+        <button class="success" onclick="mark(this,'✅')">✅</button>
+        <button class="fail" onclick="mark(this,'❌')">❌</button>
+      </td>
+    </tr>
+
+    <!-- Histórico -->
     <tr>
       <td>Histórico</td>
-      <td>Todas as ações aparecem</td>
-      <td>Mineração e compra de planos estão listadas</td>
+      <td>Exibe todas as ações (mineração e compras)</td>
       <td class="status">
-        <button class="success" onclick="mark(this, '✅')">✅</button>
-        <button class="fail" onclick="mark(this, '❌')">❌</button>
+        <button class="success" onclick="mark(this,'✅')">✅</button>
+        <button class="fail" onclick="mark(this,'❌')">❌</button>
       </td>
     </tr>
+
+    <!-- Perfil -->
     <tr>
       <td>Perfil</td>
-      <td>Nome e email corretos</td>
-      <td>Informações do usuário logado aparecem</td>
+      <td>Informações do usuário aparecem corretamente</td>
       <td class="status">
-        <button class="success" onclick="mark(this, '✅')">✅</button>
-        <button class="fail" onclick="mark(this, '❌')">❌</button>
-      </td>
-    </tr>
-    <tr>
-      <td>Login & Registro</td>
-      <td>Novo usuário</td>
-      <td>Registro cria usuário e salva no MongoDB</td>
-      <td class="status">
-        <button class="success" onclick="mark(this, '✅')">✅</button>
-        <button class="fail" onclick="mark(this, '❌')">❌</button>
+        <button class="success" onclick="mark(this,'✅')">✅</button>
+        <button class="fail" onclick="mark(this,'❌')">❌</button>
       </td>
     </tr>
   </tbody>
