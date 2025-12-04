@@ -1,35 +1,19 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Imidio Mining</title>
-    <link rel="stylesheet" href="dashboard.css">
+<meta charset="UTF-8">
+<title>Dashboard - Imidio Mining</title>
 </head>
 <body>
-
-    <header>
-        <h1>Bem-vindo à Mineração</h1>
-        <button id="logoutBtn">Sair</button>
-    </header>
-
-    <section class="card">
-        <h2>Saldo da Conta</h2>
-        <p><span id="saldo">0.00</span> USDT</p>
-    </section>
-
-    <section class="card">
-        <h2>Status da Mineração</h2>
-        <p id="statusMineracao">Desligada</p>
-        <button id="btnIniciar">Iniciar Mineração</button>
-        <button id="btnParar" class="danger">Parar Mineração</button>
-    </section>
-
-    <section class="card">
-        <h2>Ganhos Hoje</h2>
-        <p><span id="ganhosHoje">0.00</span> USDT</p>
-    </section>
-
-    <script src="dashboard.js"></script>
+<h1>Bem-vindo, <span id="userName">Usuário</span>!</h1>
+<p>Saldo de mineração: <span id="balance">0</span> Coins</p>
+<button onclick="mine()">Minerar 10 Coins</button>
+<br>
+<a href="plans.html">Ver Planos</a> | <a href="history.html">Histórico</a> | <a href="profile.html">Perfil</a>
+<script>
+function mine() {
+  alert("Função de mineração simulada!");
+}
+</script>
 </body>
 </html>
