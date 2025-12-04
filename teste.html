@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Testes Plataforma Imidio Mining</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+  table { border-collapse: collapse; width: 100%; background: #fff; }
+  th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+  th { background: #0077cc; color: #fff; }
+  td.status { text-align: center; }
+  button { padding: 5px 10px; cursor: pointer; }
+  .success { background-color: #4CAF50; color: white; border: none; }
+  .fail { background-color: #f44336; color: white; border: none; }
+</style>
+</head>
+<body>
+<h1>Testes Plataforma Imidio Mining</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Seção / Funcionalidade</th>
+      <th>Teste</th>
+      <th>Esperado</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Dashboard</td>
+      <td>Nome do usuário aparece</td>
+      <td>Nome do usuário logado é exibido corretamente</td>
+      <td class="status">
+        <button class="success" onclick="mark(this, '✅')">✅</button>
+        <button class="fail" onclick="mark(this, '❌')">❌</button>
+      </td>
+    </tr>
+    <tr>
+      <td>Dashboard</td>
+      <td>Saldo inicial de Coins</td>
+      <td>Saldo correto do MongoDB é mostrado</td>
+      <td class="status">
+        <button class="success" onclick="mark(this, '✅')">✅</button>
+        <button class="fail" onclick="mark(this, '❌')">❌</button>
+      </td>
+    </tr>
+    <tr>
+      <td>Planos</td>
+      <td>Todos os planos aparecem</td>
+      <td>Básico, Pro, Premium com valores em USD</td>
+      <td class="status">
+        <button class="success" onclick="mark(this, '✅')">✅</button>
+        <button class="fail" onclick="mark(this, '❌')">❌</button>
+      </td>
+    </tr>
+    <tr>
+      <td>Planos</td>
+      <td>Valor do plano correto</td>
+      <td>Valores até $5000</td>
+      <td class="status">
+        <button class="success" onclick="mark(this, '✅')">✅</button>
+        <button class="fail" onclick="mark(this, '❌')">❌</button>
+      </td>
+    </tr>
+    <tr>
+      <td>Histórico</td>
+      <td>Todas as ações aparecem</td>
+      <td>Mineração e compra de planos estão listadas</td>
+      <td class="status">
+        <button class="success" onclick="mark(this, '✅')">✅</button>
+        <button class="fail" onclick="mark(this, '❌')">❌</button>
+      </td>
+    </tr>
+    <tr>
+      <td>Perfil</td>
+      <td>Nome e email corretos</td>
+      <td>Informações do usuário logado aparecem</td>
+      <td class="status">
+        <button class="success" onclick="mark(this, '✅')">✅</button>
+        <button class="fail" onclick="mark(this, '❌')">❌</button>
+      </td>
+    </tr>
+    <tr>
+      <td>Login & Registro</td>
+      <td>Novo usuário</td>
+      <td>Registro cria usuário e salva no MongoDB</td>
+      <td class="status">
+        <button class="success" onclick="mark(this, '✅')">✅</button>
+        <button class="fail" onclick="mark(this, '❌')">❌</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<script>
+function mark(btn, symbol) {
+  const cell = btn.parentElement;
+  cell.innerHTML = symbol;
+}
+</script>
+</body>
+</html>
