@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Perfil - Imidio Mining</title>
+<link rel="stylesheet" href="styles.css">
+<script src="scripts/auth.js" defer></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <h2>Imidio Crypto Mining</h2>
+  <a href="/dashboard.html">Dashboard</a>
+  <a href="/history.html">Histórico</a>
+  <a href="/plans.html">Planos</a>
+  <a href="/profile.html">Perfil</a>
+</nav>
+
+<div class="container">
+  <h1>Meu Perfil</h1>
+
+  <div id="profileData">
+    <p><strong>Nome:</strong> <span id="userName"></span></p>
+    <p><strong>Email:</strong> <span id="userEmail"></span></p>
+    <p><strong>Plano Atual:</strong> <span id="userPlan">Nenhum</span></p>
+    <p><strong>Coins:</strong> <span id="userCoins">0</span></p>
+  </div>
+
+  <button onclick="logout()" class="btn-logout">Sair</button>
+</div>
+
+<script>
+async function loadProfile(){
+  const userId = localStorage.getItem("userId");
+  if(!userId){
+    window.location.href = "/";
+    return;
+  }
+
+  const res = await fetch(`/user/${userId}`);
+  const data = await res.json();
+
+  document.getElementById("userName").innerText = data.nome;
+  document.getElementById("userEmail").innerText = data.email;
+  document.getElementById("userPlan").innerText = data.plan || "Nenhum";
+  document.getElementById("userCoins").innerText = data.balance;
+}
+
+function logout(){
+  localStorage.clear();
+  window.location.href = "/";
+}
+
+loadProfile();
+</script>
+
+</body>
+</html>
