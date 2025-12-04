@@ -2,42 +2,56 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Imidio Crypto Mining - Planos</title>
-<link rel="stylesheet" href="css/styles.css">
+<title>Planos - Imidio Crypto Mining</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+  h1 { color: #0077cc; }
+  .plans { display: flex; flex-wrap: wrap; gap: 20px; }
+  .plan { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); flex: 1 1 200px; }
+  .plan h2 { margin-top: 0; color: #0077cc; }
+  .plan p { font-size: 1.2em; margin: 10px 0; }
+  .plan button { background: #0077cc; color: #fff; padding: 10px; border: none; border-radius: 5px; cursor: pointer; }
+  .plan button:hover { background: #005fa3; }
+</style>
 </head>
 <body>
-<header>
-    <h1>Imidio Crypto Mining</h1>
-    <nav>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="history.html">Histórico</a>
-        <a href="plans.html">Planos</a>
-        <a href="profile.html">Perfil</a>
-    </nav>
-</header>
+<h1>Escolha seu Plano</h1>
 
-<main>
-    <h2>Escolha seu Plano</h2>
-    <div class="plans-container">
-        <div class="plan-card" data-plan="basico">
-            <h3>Básico</h3>
-            <p>+$50 / clique</p>
-            <button onclick="buyPlan('basico')">Comprar</button>
-        </div>
-        <div class="plan-card" data-plan="pro">
-            <h3>Pro</h3>
-            <p>+$500 / clique</p>
-            <button onclick="buyPlan('pro')">Comprar</button>
-        </div>
-        <div class="plan-card" data-plan="premium">
-            <h3>Premium</h3>
-            <p>+$5,000 / clique</p>
-            <button onclick="buyPlan('premium')">Comprar</button>
-        </div>
-    </div>
-</main>
+<div class="plans">
+  <div class="plan">
+    <h2>Básico</h2>
+    <p>+10 Coins / clique</p>
+    <p>Preço: $50</p>
+    <button onclick="buyPlan('Básico', 50)">Comprar</button>
+  </div>
+  
+  <div class="plan">
+    <h2>Pro</h2>
+    <p>+50 Coins / clique</p>
+    <p>Preço: $250</p>
+    <button onclick="buyPlan('Pro', 250)">Comprar</button>
+  </div>
+  
+  <div class="plan">
+    <h2>Avançado</h2>
+    <p>+250 Coins / clique</p>
+    <p>Preço: $1000</p>
+    <button onclick="buyPlan('Avançado', 1000)">Comprar</button>
+  </div>
 
-<script src="js/plans.js"></script>
+  <div class="plan">
+    <h2>Premium</h2>
+    <p>+1500 Coins / clique</p>
+    <p>Preço: $5000</p>
+    <button onclick="buyPlan('Premium', 5000)">Comprar</button>
+  </div>
+</div>
+
+<script>
+function buyPlan(planName, priceUSD) {
+  alert(`Você selecionou o plano ${planName} por $${priceUSD}.`);
+  // Aqui você pode adicionar a integração com o back-end para registrar a compra
+}
+</script>
 </body>
 </html>
