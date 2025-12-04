@@ -7,10 +7,10 @@
   body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
   h1 { color: #0077cc; }
   .plans { display: flex; flex-wrap: wrap; gap: 20px; }
-  .plan { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); flex: 1 1 200px; }
+  .plan { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); flex: 1 1 200px; text-align: center; }
   .plan h2 { margin-top: 0; color: #0077cc; }
   .plan p { font-size: 1.2em; margin: 10px 0; }
-  .plan button { background: #0077cc; color: #fff; padding: 10px; border: none; border-radius: 5px; cursor: pointer; }
+  .plan button { background: #0077cc; color: #fff; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
   .plan button:hover { background: #005fa3; }
 </style>
 </head>
@@ -20,28 +20,24 @@
 <div class="plans">
   <div class="plan">
     <h2>Básico</h2>
-    <p>+10 Coins / clique</p>
     <p>Preço: $50</p>
     <button onclick="buyPlan('Básico', 50)">Comprar</button>
   </div>
   
   <div class="plan">
     <h2>Pro</h2>
-    <p>+50 Coins / clique</p>
     <p>Preço: $250</p>
     <button onclick="buyPlan('Pro', 250)">Comprar</button>
   </div>
   
   <div class="plan">
     <h2>Avançado</h2>
-    <p>+250 Coins / clique</p>
     <p>Preço: $1000</p>
     <button onclick="buyPlan('Avançado', 1000)">Comprar</button>
   </div>
 
   <div class="plan">
     <h2>Premium</h2>
-    <p>+1500 Coins / clique</p>
     <p>Preço: $5000</p>
     <button onclick="buyPlan('Premium', 5000)">Comprar</button>
   </div>
@@ -50,7 +46,7 @@
 <script>
 function buyPlan(planName, priceUSD) {
   alert(`Você selecionou o plano ${planName} por $${priceUSD}.`);
-  // Aqui você pode adicionar a integração com o back-end para registrar a compra
+  // Integração com back-end pode ser feita aqui
 }
 </script>
 </body>
