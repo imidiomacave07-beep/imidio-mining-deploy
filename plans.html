@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Imidio Crypto Mining - Planos</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header>
+    <h1>Imidio Crypto Mining</h1>
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="history.html">Histórico</a>
+        <a href="plans.html">Planos</a>
+        <a href="profile.html">Perfil</a>
+    </nav>
+</header>
+
+<main>
+    <h2>Escolha seu Plano</h2>
+    <div class="plans-container">
+        <div class="plan-card" data-plan="basico">
+            <h3>Básico</h3>
+            <p>+$50 / clique</p>
+            <button onclick="buyPlan('basico')">Comprar</button>
+        </div>
+        <div class="plan-card" data-plan="pro">
+            <h3>Pro</h3>
+            <p>+$500 / clique</p>
+            <button onclick="buyPlan('pro')">Comprar</button>
+        </div>
+        <div class="plan-card" data-plan="premium">
+            <h3>Premium</h3>
+            <p>+$5,000 / clique</p>
+            <button onclick="buyPlan('premium')">Comprar</button>
+        </div>
+    </div>
+</main>
+
+<script src="js/plans.js"></script>
+</body>
+</html>
