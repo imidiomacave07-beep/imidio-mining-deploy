@@ -4,21 +4,29 @@
 <meta charset="UTF-8">
 <title>Imidio Mining Platform</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+  input, button { margin: 5px 0; padding: 8px; }
+  button { cursor: pointer; }
+  #message { color: green; margin-top: 10px; }
+</style>
 </head>
 <body>
 <h1>Imidio Mining Platform</h1>
 
 <div id="auth">
-  <h2>Registrar Usuário</h2>
-  <input id="regName" placeholder="Nome">
-  <input id="regEmail" placeholder="Email">
-  <input id="regPass" placeholder="Senha" type="password">
-  <button onclick="register()">Registrar</button>
-
-  <h2>Login</h2>
+  <h2>Entrar</h2>
   <input id="logEmail" placeholder="Email">
   <input id="logPass" placeholder="Senha" type="password">
   <button onclick="login()">Entrar</button>
+
+  <h2>ou Criar conta</h2>
+  <input id="regName" placeholder="Nome">
+  <input id="regEmail" placeholder="Email">
+  <input id="regPass" placeholder="Senha" type="password">
+  <button onclick="register()">Criar conta</button>
+
+  <p id="message"></p>
 </div>
 
 <div id="dashboard" style="display:none;">
@@ -35,6 +43,7 @@ let userId = null;
 let userName = "";
 
 async function register() {
+  document.getElementById("message").innerText = "Processando registro...";
   const nome = document.getElementById("regName").value;
   const email = document.getElementById("regEmail").value;
   const senha = document.getElementById("regPass").value;
@@ -44,10 +53,12 @@ async function register() {
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify({ nome, email, senha })
   });
-  alert((await res.json()).message);
+  const data = await res.json();
+  document.getElementById("message").innerText = data.message;
 }
 
 async function login() {
+  document.getElementById("message").innerText = "Processando login...";
   const email = document.getElementById("logEmail").value;
   const senha = document.getElementById("logPass").value;
 
@@ -63,9 +74,10 @@ async function login() {
     document.getElementById("userName").innerText = userName;
     document.getElementById("auth").style.display = "none";
     document.getElementById("dashboard").style.display = "block";
+    document.getElementById("message").innerText = "";
     loadHistory();
   } else {
-    alert(data.error);
+    document.getElementById("message").innerText = data.error;
   }
 }
 
@@ -95,6 +107,7 @@ function logout() {
   userName = "";
   document.getElementById("auth").style.display = "block";
   document.getElementById("dashboard").style.display = "none";
+  document.getElementById("message").innerText = "";
 }
 </script>
 </body>
