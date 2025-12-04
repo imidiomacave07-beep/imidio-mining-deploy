@@ -1,6 +1,42 @@
-body {
-  font-family: Arial, sans-serif;
-  padding: 20px;
+:root{
+  --bg:#071023;
+  --card:#0f1724;
+  --muted:#9aa8b3;
+  --accent:#00e676;
+  --glass: rgba(255,255,255,0.03);
 }
-input { display:block; margin:10px 0; padding:5px; }
-button { padding:5px 10px; margin:5px 0; }
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter, system-ui, Arial;
+  background:linear-gradient(180deg,#020617 0%, #071023 100%);
+  color:#e6f0f2;
+  min-height:100vh;
+}
+.nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 24px;
+  background:transparent;
+}
+.brand{font-weight:700; font-size:18px; color:var(--accent)}
+.nav nav a{color:var(--muted); margin-left:16px; text-decoration:none}
+.nav nav a.active{color:var(--accent)}
+.center{display:flex; justify-content:center; align-items:center; min-height:70vh}
+.card{background:var(--card); padding:18px; border-radius:10px; box-shadow:0 6px 24px rgba(0,0,0,0.6); margin:10px}
+.auth-card{width:360px; text-align:center}
+.auth-card input{width:100%; padding:10px; margin:8px 0; border-radius:6px; border:none; background:var(--glass); color:#e6f0f2}
+.auth-card button{width:100%; padding:10px; margin-top:8px; border-radius:6px; border:none; background:var(--accent); color:#00210b; font-weight:700}
+.container{padding:20px; max-width:1100px; margin:0 auto}
+.top-row{display:flex; gap:16px; flex-wrap:wrap}
+.top-row .card{flex:1; min-width:220px}
+.muted{color:var(--muted); margin-top:6px}
+.chart-card{padding:12px}
+.table{width:100%; border-collapse:collapse; margin-top:12px; background:var(--card)}
+.table th, .table td{padding:10px; border-bottom:1px solid rgba(255,255,255,0.03); text-align:left}
+.plans-grid{display:flex; gap:12px; flex-wrap:wrap}
+.plan{flex:1; min-width:180px; text-align:center}
+.plan button{background:transparent; border:2px solid var(--accent); color:var(--accent); padding:8px 12px; border-radius:8px; cursor:pointer}
+.plan button:hover{background:var(--accent); color:#021204}
+footer{padding:20px; text-align:center; color:var(--muted)}
