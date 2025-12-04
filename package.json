@@ -1,5 +1,5 @@
 {
-  "name": "imidio-crypto-mining",
+  "name": "imidio-mining",
   "version": "1.0.0",
   "type": "module",
   "main": "server.js",
