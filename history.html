@@ -2,33 +2,14 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Histórico - Imidio Crypto Mining</title>
+<title>Histórico - Imidio Mining</title>
 </head>
 <body>
 <h1>Histórico de Mineração</h1>
-<table border="1" cellpadding="5">
-<tr><th>Data</th><th>Ação</th><th>Coins</th></tr>
-<tbody id="historyTable"></tbody>
-</table>
-
-<script>
-const userId = prompt("Digite seu ID de usuário para carregar histórico:");
-
-async function loadHistory() {
-  const res = await fetch(`/mining-history/${userId}`);
-  const logs = await res.json();
-  const tbody = document.getElementById("historyTable");
-  tbody.innerHTML = '';
-  logs.forEach(log => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${new Date(log.date).toLocaleString()}</td>
-                    <td>${log.action}</td>
-                    <td>${log.amount}</td>`;
-    tbody.appendChild(tr);
-  });
-}
-
-loadHistory();
-</script>
+<ul id="historyList">
+  <li>Compra de 10 Coins - 01/01/2025</li>
+  <li>Compra de 50 Coins - 02/01/2025</li>
+</ul>
+<a href="dashboard.html">Voltar</a>
 </body>
 </html>
