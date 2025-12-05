@@ -1,36 +1,45 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Imidio Crypto Mining — Entrar</title>
-<link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<title>Imidio Mining Platform</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body { font-family: Arial; padding: 20px; background: #f4f4f4; }
+input, button { margin: 5px 0; padding: 8px; }
+button { cursor: pointer; }
+#message { color: green; margin-top: 10px; }
+</style>
 </head>
 <body>
-<header class="nav">
-  <div class="brand">Imidio Crypto Mining</div>
-  <nav>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="plans.html">Planos</a>
-  </nav>
-</header>
 
-<main class="center">
-  <div class="card auth-card">
-    <h2>Entrar</h2>
-    <input id="loginEmail" placeholder="Email" />
-    <input id="loginPass" placeholder="Senha" type="password" />
-    <button id="btnLogin">Entrar</button>
-    <p class="muted">ou</p>
-    <h3>Criar conta</h3>
-    <input id="regName" placeholder="Nome" />
-    <input id="regEmail" placeholder="Email" />
-    <input id="regPass" placeholder="Senha" type="password" />
-    <button id="btnRegister">Registrar</button>
-    <p id="authMsg" class="muted"></p>
-  </div>
-</main>
+<h1>Imidio Mining Platform</h1>
+
+<div id="auth">
+  <h2>Entrar</h2>
+  <input id="logEmail" placeholder="Email">
+  <input id="logPass" placeholder="Senha" type="password">
+  <button onclick="login()">Entrar</button>
+
+  <h2>ou Criar conta</h2>
+  <input id="regName" placeholder="Nome">
+  <input id="regEmail" placeholder="Email">
+  <input id="regPass" placeholder="Senha" type="password">
+  <button onclick="register()">Criar conta</button>
+
+  <p id="message"></p>
+</div>
+
+<div id="dashboard" style="display:none;">
+  <h2>Bem-vindo, <span id="userName"></span>!</h2>
+  <p>Saldo de mineração: <span id="balance">0</span> Coins</p>
+  <button onclick="mine()">Minerar 10 Coins</button>
+  <h3>Histórico de mineração</h3>
+  <canvas id="miningChart" width="400" height="200"></canvas>
+  <button onclick="logout()">Sair</button>
+</div>
 
 <script src="script.js"></script>
+
 </body>
 </html>
