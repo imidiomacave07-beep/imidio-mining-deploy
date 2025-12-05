@@ -5,10 +5,11 @@
 <title>Imidio Mining Platform</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-  body { font-family: Arial; padding: 20px; background: #f4f4f4; }
-  input, button { margin: 5px 0; padding: 8px; }
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+  input, button, select { margin: 5px 0; padding: 8px; }
   button { cursor: pointer; }
   #message { color: green; margin-top: 10px; }
+  .hidden { display: none; }
 </style>
 </head>
 <body>
@@ -29,17 +30,26 @@
   <p id="message"></p>
 </div>
 
-<div id="dashboard" style="display:none;">
+<div id="dashboard" class="hidden">
   <h2>Bem-vindo, <span id="userName"></span>!</h2>
-  <p>Saldo de mineração: <span id="balance">0</span> Coins</p>
+  <p>Saldo: $<span id="balance">0</span></p>
   <button onclick="mine()">Minerar 10 Coins</button>
 
-  <h3>Comprar Plano</h3>
-  <button onclick="buyPlan(50)">Pro Plan +50 Coins</button>
-  <button onclick="buyPlan(150)">Premium Plan +150 Coins</button>
+  <h3>Comprar planos</h3>
+  <select id="planSelect">
+    <option value="10">Básico +10 Coins</option>
+    <option value="50">Pro +50 Coins</option>
+    <option value="150">Premium +150 Coins</option>
+  </select>
+  <button onclick="buyPlan()">Comprar</button>
 
-  <h3>Histórico de mineração</h3>
+  <h3>Retirar saldo</h3>
+  <input type="number" id="withdrawAmount" placeholder="Valor em Coins">
+  <button onclick="withdraw()">Retirar</button>
+
+  <h3>Histórico de mineração e compras</h3>
   <canvas id="miningChart" width="400" height="200"></canvas>
+
   <button onclick="logout()">Sair</button>
 </div>
 
@@ -47,6 +57,7 @@
 let userId = null;
 let userName = "";
 
+// Registro
 async function register() {
   document.getElementById("message").innerText = "Processando registro...";
   const nome = document.getElementById("regName").value;
@@ -62,6 +73,7 @@ async function register() {
   document.getElementById("message").innerText = data.message;
 }
 
+// Login
 async function login() {
   document.getElementById("message").innerText = "Processando login...";
   const email = document.getElementById("logEmail").value;
@@ -75,17 +87,19 @@ async function login() {
   const data = await res.json();
   if(data.userId){
     userId = data.userId;
-    userName = email.split("@")[0];
+    userName = data.nome;
     document.getElementById("userName").innerText = userName;
-    document.getElementById("auth").style.display = "none";
-    document.getElementById("dashboard").style.display = "block";
+    document.getElementById("auth").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
     document.getElementById("message").innerText = "";
+    loadBalance();
     loadHistory();
   } else {
     document.getElementById("message").innerText = data.error;
   }
 }
 
+// Minerar
 async function mine() {
   const res = await fetch(`/mine/${userId}`, { method: "POST" });
   const data = await res.json();
@@ -93,36 +107,64 @@ async function mine() {
   loadHistory();
 }
 
-async function buyPlan(planAmount) {
-  const res = await fetch(`/buy-plan/${userId}`, {
+// Comprar plano
+async function buyPlan() {
+  const amount = parseInt(document.getElementById("planSelect").value);
+  const res = await fetch(`/mine/${userId}`, { method: "POST" });
+  const data = await res.json();
+
+  // Adiciona coins do plano
+  const newBalance = data.newBalance + amount;
+
+  await fetch(`/update-balance/${userId}`, {
     method: "POST",
     headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ planAmount })
+    body: JSON.stringify({ newBalance })
   });
-  const data = await res.json();
-  document.getElementById("balance").innerText = data.newBalance;
+
+  document.getElementById("balance").innerText = newBalance;
   loadHistory();
 }
 
+// Withdraw
+async function withdraw() {
+  const amount = parseInt(document.getElementById("withdrawAmount").value);
+  const res = await fetch(`/withdraw/${userId}`, {
+    method: "POST",
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ amount })
+  });
+  const data = await res.json();
+  if(data.error) alert(data.error);
+  else {
+    document.getElementById("balance").innerText = data.newBalance;
+    loadHistory();
+  }
+}
+
+// Carregar saldo atual
+async function loadBalance() {
+  const res = await fetch(`/balance/${userId}`);
+  const data = await res.json();
+  document.getElementById("balance").innerText = data.balance;
+}
+
+// Histórico e gráfico
 async function loadHistory() {
   const res = await fetch(`/mining-history/${userId}`);
   const logs = await res.json();
-
   const labels = logs.map(l => new Date(l.date).toLocaleString());
   const data = logs.map(l => l.amount);
-
   const ctx = document.getElementById('miningChart').getContext('2d');
-  new Chart(ctx, {
-    type: 'bar',
-    data: { labels, datasets: [{ label: 'Coins Minerados', data }] }
-  });
+  new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Coins Minerados/Comprados', data }] }});
 }
 
+// Logout
 function logout() {
   userId = null;
   userName = "";
-  document.getElementById("auth").style.display = "block";
-  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("auth").classList.remove("hidden");
+  document.getElementById("dashboard").classList.add("hidden");
   document.getElementById("message").innerText = "";
 }
 </script>
