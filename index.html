@@ -5,7 +5,7 @@
 <title>Imidio Mining Platform</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+  body { font-family: Arial; padding: 20px; background: #f4f4f4; }
   input, button { margin: 5px 0; padding: 8px; }
   button { cursor: pointer; }
   #message { color: green; margin-top: 10px; }
@@ -33,6 +33,11 @@
   <h2>Bem-vindo, <span id="userName"></span>!</h2>
   <p>Saldo de mineração: <span id="balance">0</span> Coins</p>
   <button onclick="mine()">Minerar 10 Coins</button>
+
+  <h3>Comprar Plano</h3>
+  <button onclick="buyPlan(50)">Pro Plan +50 Coins</button>
+  <button onclick="buyPlan(150)">Premium Plan +150 Coins</button>
+
   <h3>Histórico de mineração</h3>
   <canvas id="miningChart" width="400" height="200"></canvas>
   <button onclick="logout()">Sair</button>
@@ -83,6 +88,17 @@ async function login() {
 
 async function mine() {
   const res = await fetch(`/mine/${userId}`, { method: "POST" });
+  const data = await res.json();
+  document.getElementById("balance").innerText = data.newBalance;
+  loadHistory();
+}
+
+async function buyPlan(planAmount) {
+  const res = await fetch(`/buy-plan/${userId}`, {
+    method: "POST",
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ planAmount })
+  });
   const data = await res.json();
   document.getElementById("balance").innerText = data.newBalance;
   loadHistory();
