@@ -1,46 +1,60 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <title>Imidio Mining Platform</title>
+<meta charset="UTF-8">
+<title>Imidio Mining Platform</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+  h1, h2 { color: #333; }
+  button { margin: 5px 0; padding: 8px 12px; cursor: pointer; }
+  .plan { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+</style>
 </head>
 <body>
-  <h1>Imidio Mining Platform</h1>
+<h1>Bem-vindo, <span id="userName">Usuário</span>!</h1>
+<p>Saldo: <span id="balance">0</span> Coins</p>
 
-  <h2>Carteira BTC</h2>
-  <p id="balance">0 BTC ≈ $0.00</p>
+<h2>Planos Disponíveis</h2>
+<div id="plans"></div>
 
-  <h2>Planos</h2>
-  <ul id="plan-list">
-    <li>Bronze: $10 - 20% lucro em 180 dias (Saque após 10 dias)</li>
-    <li>Prata: $50 - 30% lucro em 180 dias (Saque após 10 dias)</li>
-    <li>Ouro: $100 - 50% lucro em 180 dias (Saque após 10 dias)</li>
-  </ul>
+<script>
+// Simulação de dados que viria do MongoDB
+const user = { id: "123", name: "Imidio", balance: 0 };
+const plans = [
+  { id: 1, name: "Bronze", price: 10, profitPercent: 20 },
+  { id: 2, name: "Prata", price: 50, profitPercent: 30 },
+  { id: 3, name: "Ouro", price: 100, profitPercent: 50 }
+];
 
-  <h2>Depósitos mais recentes</h2>
-  <table border="1">
-    <thead>
-      <tr>
-        <th>Usuário</th>
-        <th>Montante</th>
-      </tr>
-    </thead>
-    <tbody id="deposit-table">
-      <!-- Depósitos do backend vão aqui -->
-    </tbody>
-  </table>
+// Mostra usuário e saldo
+document.getElementById("userName").innerText = user.name;
+document.getElementById("balance").innerText = user.balance;
 
-  <h2>Últimos levantamentos</h2>
-  <table border="1">
-    <thead>
-      <tr>
-        <th>Usuário</th>
-        <th>Montante</th>
-      </tr>
-    </thead>
-    <tbody id="withdraw-table">
-      <!-- Levantamentos do backend vão aqui -->
-    </tbody>
-  </table>
+// Mostra os planos
+const plansDiv = document.getElementById("plans");
+plans.forEach(plan => {
+  const div = document.createElement("div");
+  div.className = "plan";
+  div.innerHTML = `
+    <strong>${plan.name}</strong><br>
+    Preço: $${plan.price}<br>
+    Lucro: ${plan.profitPercent}%<br>
+    <button onclick="buyPlan(${plan.id})">Comprar</button>
+  `;
+  plansDiv.appendChild(div);
+});
+
+// Função para comprar plano
+function buyPlan(planId) {
+  const plan = plans.find(p => p.id === planId);
+  if (user.balance >= plan.price) {
+    user.balance -= plan.price;
+    document.getElementById("balance").innerText = user.balance;
+    alert(`Plano ${plan.name} comprado!`);
+  } else {
+    alert("Saldo insuficiente!");
+  }
+}
+</script>
 </body>
 </html>
