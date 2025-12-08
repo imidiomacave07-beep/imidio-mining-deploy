@@ -19,16 +19,14 @@
 <div id="plans"></div>
 
 <script>
-const userId = "ID_DO_SEU_USUARIO"; // Coloque o ID do usuário real
-const userNameSpan = document.getElementById("userName");
-const balanceSpan = document.getElementById("balance");
+const userId = "12345"; // Depois vamos trocar pelo real
 
 // Carregar usuário
 fetch(`/api/users/${userId}`)
   .then(res => res.json())
   .then(user => {
-    userNameSpan.innerText = user.name;
-    balanceSpan.innerText = user.balance;
+    document.getElementById("userName").innerText = user.name;
+    document.getElementById("balance").innerText = user.balance;
   });
 
 // Carregar planos
@@ -42,13 +40,14 @@ fetch("/api/plans")
       div.innerHTML = `
         <strong>${plan.name}</strong><br>
         Preço: $${plan.price}<br>
-        Lucro: ${plan.profitPercent}% em ${plan.durationDays} dias (Saque: ${plan.withdrawDelayDays} dias)<br>
+        Lucro: ${plan.profitPercent}%<br>
         <button onclick="buyPlan('${plan._id}')">Comprar</button>
       `;
       plansDiv.appendChild(div);
     });
   });
 
+// Função comprar plano
 function buyPlan(planId) {
   fetch("/api/buy-plan", {
     method: "POST",
@@ -57,12 +56,8 @@ function buyPlan(planId) {
   })
   .then(res => res.json())
   .then(data => {
-    if (data.error) {
-      alert(data.error);
-    } else {
-      alert(data.message);
-      balanceSpan.innerText = parseFloat(balanceSpan.innerText) - data.stake.price;
-    }
+    if (data.error) alert(data.error);
+    else alert("Plano comprado!");
   });
 }
 </script>
