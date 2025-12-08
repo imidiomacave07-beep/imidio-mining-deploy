@@ -1,23 +1,31 @@
+// server.js
 import express from "express";
-import bodyParser from "body-parser";
 import mongoose from "mongoose";
+import path from "path";
 
 const app = express();
-app.use(bodyParser.json());
+const PORT = process.env.PORT || 10000;
+const __dirname = path.resolve();
 
-// Conexão com MongoDB
-const MONGO_URI = process.env.MONGO_URI || "sua_string_do_mongo_aqui";
+// Conecta ao MongoDB
+const mongoURI = process.env.MONGO_URI || "mongodb+srv://imidiomacave:84882990Ma@cluster0.fqqvnqa.mongodb.net/mining?retryWrites=true&w=majority";
 
-mongoose.connect(MONGO_URI)
-  .then(() => console.log("MongoDB conectado com sucesso!"))
-  .catch(err => console.error("Erro ao conectar MongoDB:", err));
+mongoose.connect(mongoURI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log("MongoDB conectado com sucesso!"))
+.catch(err => console.log("Erro ao conectar MongoDB:", err));
 
-// Rotas simples
-app.get("/", (req, res) => {
-  res.send("Imidio Mining Platform funcionando!");
+// Middleware para arquivos estáticos (index.html dentro de /public)
+app.use(express.static(path.join(__dirname, "public")));
+
+// Rotas extras se precisar futuramente
+app.get("/api/status", (req, res) => {
+  res.json({ status: "Plataforma online!" });
 });
 
-const PORT = process.env.PORT || 10000;
+// Inicia o servidor
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
