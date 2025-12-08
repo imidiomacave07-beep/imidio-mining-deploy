@@ -1,45 +1,94 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<title>Imidio Mining Platform</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-body { font-family: Arial; padding: 20px; background: #f4f4f4; }
-input, button { margin: 5px 0; padding: 8px; }
-button { cursor: pointer; }
-#message { color: green; margin-top: 10px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Imidio Mining Platform</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+    header { background: #111; color: #fff; padding: 10px; }
+    h1 { margin: 0; }
+    main { margin-top: 20px; }
+    section { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    h2 { margin-top: 0; }
+    table { width: 100%; border-collapse: collapse; }
+    table th, table td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
+  </style>
 </head>
 <body>
+  <header>
+    <h1>Imidio Mining Platform</h1>
+  </header>
 
-<h1>Imidio Mining Platform</h1>
+  <main>
+    <section id="wallet">
+      <h2>Carteira BTC</h2>
+      <p id="balance">0 BTC ≈ $0.00</p>
+    </section>
 
-<div id="auth">
-  <h2>Entrar</h2>
-  <input id="logEmail" placeholder="Email">
-  <input id="logPass" placeholder="Senha" type="password">
-  <button onclick="login()">Entrar</button>
+    <section id="plans">
+      <h2>Planos</h2>
+      <div id="plan-list"></div>
+    </section>
 
-  <h2>ou Criar conta</h2>
-  <input id="regName" placeholder="Nome">
-  <input id="regEmail" placeholder="Email">
-  <input id="regPass" placeholder="Senha" type="password">
-  <button onclick="register()">Criar conta</button>
+    <section id="deposits">
+      <h2>Depósitos mais recentes</h2>
+      <table id="deposit-table">
+        <thead>
+          <tr><th>Usuário</th><th>Montante</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
 
-  <p id="message"></p>
-</div>
+    <section id="withdrawals">
+      <h2>Últimos levantamentos</h2>
+      <table id="withdraw-table">
+        <thead>
+          <tr><th>Usuário</th><th>Montante</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
 
-<div id="dashboard" style="display:none;">
-  <h2>Bem-vindo, <span id="userName"></span>!</h2>
-  <p>Saldo de mineração: <span id="balance">0</span> Coins</p>
-  <button onclick="mine()">Minerar 10 Coins</button>
-  <h3>Histórico de mineração</h3>
-  <canvas id="miningChart" width="400" height="200"></canvas>
-  <button onclick="logout()">Sair</button>
-</div>
+  <script>
+    // === Placeholder de dados dinâmicos do backend ===
+    const walletBalance = { btc: 0.0072130169, usd: 656.32 };
+    const plans = [
+      { name: "Plano Bronze", price: 10, profitPercent: 20, durationDays: 180, withdrawDelayDays: 10 },
+      { name: "Plano Prata", price: 50, profitPercent: 30, durationDays: 180, withdrawDelayDays: 10 },
+      { name: "Plano Ouro", price: 100, profitPercent: 50, durationDays: 180, withdrawDelayDays: 10 }
+    ];
+    const deposits = []; // preencher via backend
+    const withdrawals = []; // preencher via backend
 
-<script src="script.js"></script>
+    // === Atualiza carteira ===
+    document.getElementById("balance").textContent = `${walletBalance.btc} BTC ≈ $${walletBalance.usd}`;
 
+    // === Lista de planos ===
+    const planList = document.getElementById("plan-list");
+    plans.forEach(plan => {
+      const div = document.createElement("div");
+      div.innerHTML = `<strong>${plan.name}</strong>: $${plan.price} - ${plan.profitPercent}% lucro em ${plan.durationDays} dias (Saque: ${plan.withdrawDelayDays} dias)`;
+      planList.appendChild(div);
+    });
+
+    // === Depositos ===
+    const depositTableBody = document.querySelector("#deposit-table tbody");
+    deposits.forEach(dep => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${dep.user}</td><td>${dep.amount}</td>`;
+      depositTableBody.appendChild(row);
+    });
+
+    // === Levantamentos ===
+    const withdrawTableBody = document.querySelector("#withdraw-table tbody");
+    withdrawals.forEach(wd => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${wd.user}</td><td>${wd.amount}</td>`;
+      withdrawTableBody.appendChild(row);
+    });
+  </script>
 </body>
 </html>
