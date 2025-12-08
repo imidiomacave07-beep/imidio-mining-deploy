@@ -1,0 +1,39 @@
+<h2>Comprar Plano</h2>
+<div id="plans"></div>
+
+<script>
+async function loadPlans() {
+  const res = await fetch("/plans");
+  const plans = await res.json();
+  const container = document.getElementById("plans");
+  container.innerHTML = "";
+  plans.forEach(plan => {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <h3>${plan.name}</h3>
+      <p>Preço: $${plan.price}</p>
+      <p>Lucro: ${plan.profitPercent}% em ${plan.durationDays} dias</p>
+      <button onclick="buyPlan('${plan._id}','paypal')">Pagar com PayPal</button>
+      <button onclick="buyPlan('${plan._id}','crypto')">Pagar com Cripto</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+async function buyPlan(planId, method) {
+  const userId = "USUARIO_EXEMPLO"; // substituir pelo id real do usuário
+  const res = await fetch("/buy-plan", {
+    method: "POST",
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ userId, planId, paymentMethod: method })
+  });
+  const data = await res.json();
+  if(method === "paypal") {
+    window.open(data.paymentLink, "_blank");
+  } else {
+    alert("Pague para o endereço: " + data.cryptoAddress);
+  }
+}
+
+loadPlans();
+</script>
