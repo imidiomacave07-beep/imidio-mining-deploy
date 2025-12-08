@@ -1,22 +1,23 @@
-import express from "express";
-import mongoose from "mongoose";
-import bodyParser from "body-parser";
-
-const app = express();
-const PORT = process.env.PORT || 10000;
-
-app.use(bodyParser.json());
-app.use(express.static("public"));
-
-// Conectar MongoDB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB conectado com sucesso!"))
-  .catch(err => console.error("Erro ao conectar MongoDB:", err));
-
-// Rotas
-app.post("/register", async (req, res) => { /* lógica de cadastro */ });
-app.post("/login", async (req, res) => { /* lógica de login */ });
-app.post("/buy-plan/:userId", async (req, res) => { /* lógica de compra de plano */ });
-app.get("/plans", async (req, res) => { /* retorna lista de planos */ });
-
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+{
+  "name": "imidio-mining-platform",
+  "version": "1.0.0",
+  "description": "Plataforma de mineração Imidio",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": ["mining", "crypto", "platform"],
+  "author": "Imidio Macave",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
