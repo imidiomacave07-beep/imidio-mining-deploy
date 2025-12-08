@@ -1,67 +1,58 @@
 import express from "express";
 import mongoose from "mongoose";
-import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-app.use(cors());
-app.use(express.json());
-app.use(express.static("public"));
+// Configurar caminho para a pasta public
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, "public")));
 
-// Conexão MongoDB
-const MONGO_URI = process.env.MONGO_URI;
-mongoose.connect(MONGO_URI)
+// Conectar ao MongoDB
+const mongoUri = process.env.MONGO_URI || "mongodb+srv://imidiomacave:84882990Ma@cluster0.fqqvnqa.mongodb.net/mining?retryWrites=true&w=majority";
+mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("MongoDB conectado com sucesso!"))
-  .catch(err => console.log("Erro ao conectar MongoDB:", err));
+  .catch(err => console.error("Erro ao conectar MongoDB:", err));
 
-// Schema e modelo
-const PlanSchema = new mongoose.Schema({
+// Schemas
+const planSchema = new mongoose.Schema({
   name: String,
   price: Number,
   profitPercent: Number,
   durationDays: Number,
   withdrawDelayDays: Number
 });
-const Plan = mongoose.model("Plan", PlanSchema);
-
-const UserSchema = new mongoose.Schema({
-  name: String,
-  balance: Number,
-});
-const User = mongoose.model("User", UserSchema);
-
-const DepositSchema = new mongoose.Schema({
+const depositSchema = new mongoose.Schema({
   user: String,
-  amount: Number
+  amount: String
 });
-const Deposit = mongoose.model("Deposit", DepositSchema);
-
-const WithdrawSchema = new mongoose.Schema({
+const withdrawalSchema = new mongoose.Schema({
   user: String,
-  amount: Number
+  amount: String
 });
-const Withdraw = mongoose.model("Withdraw", WithdrawSchema);
+
+const Plan = mongoose.model("Plan", planSchema);
+const Deposit = mongoose.model("Deposit", depositSchema);
+const Withdrawal = mongoose.model("Withdrawal", withdrawalSchema);
 
 // Rotas API
-app.get("/api/user/:id", async (req, res) => {
-  const user = await User.findById(req.params.id);
-  res.json(user);
-});
-
 app.get("/api/plans", async (req, res) => {
-  const plans = await Plan.find();
+  const plans = await Plan.find({});
   res.json(plans);
 });
 
 app.get("/api/deposits", async (req, res) => {
-  const deposits = await Deposit.find().sort({ _id: -1 }).limit(10);
+  const deposits = await Deposit.find({}).sort({ _id: -1 }).limit(10);
   res.json(deposits);
 });
 
-app.get("/api/withdraws", async (req, res) => {
-  const withdraws = await Withdraw.find().sort({ _id: -1 }).limit(10);
-  res.json(withdraws);
+app.get("/api/withdrawals", async (req, res) => {
+  const withdrawals = await Withdrawal.find({}).sort({ _id: -1 }).limit(10);
+  res.json(withdrawals);
 });
 
+// Start do servidor
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
