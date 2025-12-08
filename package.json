@@ -2,6 +2,7 @@
   "name": "imidio-mining-platform",
   "version": "1.0.0",
   "description": "Plataforma de mineração Imidio",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
