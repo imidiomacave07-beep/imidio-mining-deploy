@@ -1,31 +1,22 @@
 import express from "express";
 import mongoose from "mongoose";
-import { getPlans, buyPlan, getUserPlans } from "./bytesPlan.js";
+import bodyParser from "body-parser";
 
 const app = express();
-app.use(express.json());
-
 const PORT = process.env.PORT || 10000;
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
+app.use(bodyParser.json());
+app.use(express.static("public"));
+
+// Conectar MongoDB
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB conectado com sucesso!"))
+  .catch(err => console.error("Erro ao conectar MongoDB:", err));
 
 // Rotas
-app.get("/plans", async (req, res) => {
-  const plans = await getPlans();
-  res.json(plans);
-});
-
-app.post("/buy/:planId", async (req, res) => {
-  try {
-    const userPlan = await buyPlan(req.body.userId, req.params.planId);
-    res.json(userPlan);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-app.get("/user-plans/:userId", async (req, res) => {
-  const plans = await getUserPlans(req.params.userId);
-  res.json(plans);
-});
+app.post("/register", async (req, res) => { /* lógica de cadastro */ });
+app.post("/login", async (req, res) => { /* lógica de login */ });
+app.post("/buy-plan/:userId", async (req, res) => { /* lógica de compra de plano */ });
+app.get("/plans", async (req, res) => { /* retorna lista de planos */ });
 
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
