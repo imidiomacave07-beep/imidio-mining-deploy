@@ -6,16 +6,17 @@ import { fileURLToPath } from "url";
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// Configurar caminho para a pasta public
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, "public")));
 
-// Conectar ao MongoDB
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.json());
+
+// Conectar MongoDB
 const mongoUri = process.env.MONGO_URI || "mongodb+srv://imidiomacave:84882990Ma@cluster0.fqqvnqa.mongodb.net/mining?retryWrites=true&w=majority";
 mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("MongoDB conectado com sucesso!"))
-  .catch(err => console.error("Erro ao conectar MongoDB:", err));
+  .then(() => console.log("MongoDB conectado!"))
+  .catch(err => console.error("Erro MongoDB:", err));
 
 // Schemas
 const planSchema = new mongoose.Schema({
@@ -25,34 +26,60 @@ const planSchema = new mongoose.Schema({
   durationDays: Number,
   withdrawDelayDays: Number
 });
-const depositSchema = new mongoose.Schema({
-  user: String,
-  amount: String
+
+const userSchema = new mongoose.Schema({
+  name: String,
+  balance: Number
 });
-const withdrawalSchema = new mongoose.Schema({
-  user: String,
-  amount: String
+
+const stakeSchema = new mongoose.Schema({
+  userId: String,
+  planId: String,
+  purchaseDate: Date,
+  canWithdrawDate: Date,
+  price: Number,
+  profitPercent: Number
 });
 
 const Plan = mongoose.model("Plan", planSchema);
-const Deposit = mongoose.model("Deposit", depositSchema);
-const Withdrawal = mongoose.model("Withdrawal", withdrawalSchema);
+const User = mongoose.model("User", userSchema);
+const Stake = mongoose.model("Stake", stakeSchema);
 
-// Rotas API
+// Rotas
 app.get("/api/plans", async (req, res) => {
   const plans = await Plan.find({});
   res.json(plans);
 });
 
-app.get("/api/deposits", async (req, res) => {
-  const deposits = await Deposit.find({}).sort({ _id: -1 }).limit(10);
-  res.json(deposits);
+app.get("/api/users/:userId", async (req, res) => {
+  const user = await User.findById(req.params.userId);
+  res.json(user);
 });
 
-app.get("/api/withdrawals", async (req, res) => {
-  const withdrawals = await Withdrawal.find({}).sort({ _id: -1 }).limit(10);
-  res.json(withdrawals);
+app.post("/api/buy-plan", async (req, res) => {
+  const { userId, planId } = req.body;
+  const user = await User.findById(userId);
+  const plan = await Plan.findById(planId);
+  if (!user || !plan) return res.status(404).json({ error: "Usuário ou plano não encontrado" });
+
+  if (user.balance < plan.price) return res.status(400).json({ error: "Saldo insuficiente" });
+
+  user.balance -= plan.price;
+  await user.save();
+
+  const now = new Date();
+  const stake = new Stake({
+    userId,
+    planId,
+    purchaseDate: now,
+    canWithdrawDate: new Date(now.getTime() + plan.withdrawDelayDays * 24 * 60 * 60 * 1000),
+    price: plan.price,
+    profitPercent: plan.profitPercent
+  });
+
+  await stake.save();
+  res.json({ message: "Plano comprado com sucesso!", stake });
 });
 
-// Start do servidor
+// Start
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
