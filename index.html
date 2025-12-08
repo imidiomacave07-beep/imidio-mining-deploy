@@ -26,11 +26,9 @@ const plans = [
   { id: 3, name: "Ouro", price: 100, profitPercent: 50 }
 ];
 
-// Mostra usuário e saldo
 document.getElementById("userName").innerText = user.name;
 document.getElementById("balance").innerText = user.balance;
 
-// Mostra os planos
 const plansDiv = document.getElementById("plans");
 plans.forEach(plan => {
   const div = document.createElement("div");
@@ -44,7 +42,6 @@ plans.forEach(plan => {
   plansDiv.appendChild(div);
 });
 
-// Função para comprar plano
 function buyPlan(planId) {
   const plan = plans.find(p => p.id === planId);
   if (user.balance >= plan.price) {
