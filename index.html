@@ -1,39 +1,80 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <title>Imidio Mining Platform</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
-    h1, h2 { color: #333; }
-    .section { margin-bottom: 20px; }
-  </style>
+<meta charset="UTF-8">
+<title>Imidio Mining Platform</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+  h1, h2 { color: #333; }
+  .plan, .deposit, .withdraw { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fff; border-radius: 5px; }
+  button { padding: 6px 12px; margin-top: 5px; cursor: pointer; }
+</style>
 </head>
 <body>
-  <h1>Imidio Mining Platform</h1>
 
-  <div class="section">
-    <h2>Carteira BTC</h2>
-    <p>0.0072130169 BTC ≈ $656.32</p>
-  </div>
+<h1>Bem-vindo, <span id="userName">Usuário</span>!</h1>
+<p>Saldo: <span id="balance">0</span> Coins</p>
 
-  <div class="section">
-    <h2>Planos</h2>
-    <ul>
-      <li><strong>Plano Bronze</strong>: $10 - 20% lucro em 180 dias (Saque: 10 dias)</li>
-      <li><strong>Plano Prata</strong>: $50 - 30% lucro em 180 dias (Saque: 10 dias)</li>
-      <li><strong>Plano Ouro</strong>: $100 - 50% lucro em 180 dias (Saque: 10 dias)</li>
-    </ul>
-  </div>
+<h2>Planos Disponíveis</h2>
+<div id="plans"></div>
 
-  <div class="section">
-    <h2>Depósitos mais recentes</h2>
-    <p>Usuário | Montante</p>
-  </div>
+<h2>Últimos Depósitos</h2>
+<div id="deposits"></div>
 
-  <div class="section">
-    <h2>Últimos levantamentos</h2>
-    <p>Usuário | Montante</p>
-  </div>
+<h2>Últimos Levantamentos</h2>
+<div id="withdraws"></div>
+
+<script>
+// ID do usuário de teste (você pode alterar para pegar via login real)
+const USER_ID = "COLOQUE_AQUI_O_ID_DO_USUARIO";
+
+// Função para carregar dados
+async function loadData() {
+  try {
+    // Usuário
+    const user = await fetch(`/api/user/${USER_ID}`).then(res => res.json());
+    document.getElementById("userName").innerText = user.name;
+    document.getElementById("balance").innerText = user.balance;
+
+    // Planos
+    const plans = await fetch("/api/plans").then(res => res.json());
+    const plansDiv = document.getElementById("plans");
+    plansDiv.innerHTML = plans.map(p => `
+      <div class="plan">
+        <strong>${p.name}</strong><br>
+        Preço: $${p.price}<br>
+        Lucro: ${p.profitPercent}% em ${p.durationDays} dias<br>
+        Saque: ${p.withdrawDelayDays} dias
+        <br><button onclick="buyPlan(${p._id})">Comprar</button>
+      </div>
+    `).join("");
+
+    // Depósitos
+    const deposits = await fetch("/api/deposits").then(res => res.json());
+    const depositsDiv = document.getElementById("deposits");
+    depositsDiv.innerHTML = deposits.map(d => `
+      <div class="deposit">${d.user} - $${d.amount}</div>
+    `).join("");
+
+    // Levantamentos
+    const withdraws = await fetch("/api/withdraws").then(res => res.json());
+    const withdrawsDiv = document.getElementById("withdraws");
+    withdrawsDiv.innerHTML = withdraws.map(w => `
+      <div class="withdraw">${w.user} - ${w.amount} BTC</div>
+    `).join("");
+  } catch (err) {
+    console.error("Erro ao carregar dados:", err);
+  }
+}
+
+// Função para comprar plano
+async function buyPlan(planId) {
+  alert(`Comprar plano ${planId} - implementar pagamento real`);
+  // Aqui você chamaria sua API de compra de plano e atualizaria saldo
+}
+
+loadData();
+</script>
+
 </body>
 </html>
