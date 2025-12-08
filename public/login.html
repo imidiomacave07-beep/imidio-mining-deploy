@@ -1,76 +1,37 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Login</title>
-
-  <style>
-    body {
-      font-family: Arial;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 0;
-    }
-
-    .container {
-      width: 90%;
-      max-width: 400px;
-      margin: 80px auto;
-      background: #fff;
-      padding: 25px;
-      border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    }
-
-    h2 {
-      text-align: center;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      background: #0066ff;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #0050c7;
-    }
-
-    a {
-      display: block;
-      text-align: center;
-      margin-top: 12px;
-      color: #0066ff;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Login - Imidio Mining Platform</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+  form { max-width: 400px; margin: auto; padding: 20px; background: #fff; border-radius: 5px; }
+  input { display: block; width: 100%; margin-bottom: 10px; padding: 8px; }
+  button { padding: 10px 15px; cursor: pointer; }
+</style>
 </head>
-
 <body>
-  <div class="container">
-    <h2>Entrar</h2>
+<h2>Entrar na Plataforma</h2>
+<form id="loginForm">
+  <input type="text" placeholder="Usuário" id="username" required>
+  <input type="password" placeholder="Senha" id="password" required>
+  <button type="submit">Entrar</button>
+</form>
 
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Senha" />
+<script>
+const form = document.getElementById("loginForm");
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const user = document.getElementById("username").value;
+  const pass = document.getElementById("password").value;
 
-    <button id="loginBtn">Login</button>
-
-    <a href="/register.html">Criar Conta</a>
-  </div>
-
-  <script src="auth.js"></script>
+  // Simulação: autenticação local
+  if(user === "admin" && pass === "1234") {
+    window.location.href = "index.html"; // Redireciona para a página principal
+  } else {
+    alert("Usuário ou senha incorretos!");
+  }
+});
+</script>
 </body>
 </html>
