@@ -4,76 +4,82 @@
 <meta charset="UTF-8">
 <title>Imidio Mining Platform</title>
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+  body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
   h1, h2 { color: #333; }
-  .plan, .deposit, .withdraw { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fff; border-radius: 5px; }
-  button { padding: 6px 12px; margin-top: 5px; cursor: pointer; }
+  .plan, .section { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fff; }
+  button { padding: 6px 12px; cursor: pointer; margin-top: 5px; }
 </style>
 </head>
 <body>
 
 <h1>Bem-vindo, <span id="userName">Usuário</span>!</h1>
-<p>Saldo: <span id="balance">0</span> Coins</p>
+<p>Saldo: <span id="balance">0 BTC ≈ $0</span></p>
 
+<div class="section">
 <h2>Planos Disponíveis</h2>
 <div id="plans"></div>
+</div>
 
-<h2>Últimos Depósitos</h2>
-<div id="deposits"></div>
+<div class="section">
+<h2>Depósitos Mais Recentes</h2>
+<ul id="deposits"></ul>
+</div>
 
+<div class="section">
 <h2>Últimos Levantamentos</h2>
-<div id="withdraws"></div>
+<ul id="withdrawals"></ul>
+</div>
 
 <script>
-// ID do usuário de teste (você pode alterar para pegar via login real)
-const USER_ID = "COLOQUE_AQUI_O_ID_DO_USUARIO";
+document.getElementById("userName").innerText = "Imidio";
+document.getElementById("balance").innerText = "0.0072130169 BTC ≈ $656.32";
 
-// Função para carregar dados
-async function loadData() {
-  try {
-    // Usuário
-    const user = await fetch(`/api/user/${USER_ID}`).then(res => res.json());
-    document.getElementById("userName").innerText = user.name;
-    document.getElementById("balance").innerText = user.balance;
-
-    // Planos
-    const plans = await fetch("/api/plans").then(res => res.json());
+// Carregar planos
+fetch("/api/plans")
+  .then(res => res.json())
+  .then(plans => {
     const plansDiv = document.getElementById("plans");
-    plansDiv.innerHTML = plans.map(p => `
-      <div class="plan">
-        <strong>${p.name}</strong><br>
-        Preço: $${p.price}<br>
-        Lucro: ${p.profitPercent}% em ${p.durationDays} dias<br>
-        Saque: ${p.withdrawDelayDays} dias
-        <br><button onclick="buyPlan(${p._id})">Comprar</button>
-      </div>
-    `).join("");
+    plans.forEach(plan => {
+      const div = document.createElement("div");
+      div.className = "plan";
+      div.innerHTML = `
+        <strong>${plan.name}</strong><br>
+        Preço: $${plan.price}<br>
+        Lucro: ${plan.profitPercent}% em ${plan.durationDays} dias (Saque: ${plan.withdrawDelayDays} dias)<br>
+        <button onclick="buyPlan(${plan._id})">Comprar</button>
+      `;
+      plansDiv.appendChild(div);
+    });
+  });
 
-    // Depósitos
-    const deposits = await fetch("/api/deposits").then(res => res.json());
-    const depositsDiv = document.getElementById("deposits");
-    depositsDiv.innerHTML = deposits.map(d => `
-      <div class="deposit">${d.user} - $${d.amount}</div>
-    `).join("");
+// Carregar depósitos
+fetch("/api/deposits")
+  .then(res => res.json())
+  .then(deposits => {
+    const depositsUl = document.getElementById("deposits");
+    deposits.forEach(d => {
+      const li = document.createElement("li");
+      li.textContent = `${d.user}: ${d.amount}`;
+      depositsUl.appendChild(li);
+    });
+  });
 
-    // Levantamentos
-    const withdraws = await fetch("/api/withdraws").then(res => res.json());
-    const withdrawsDiv = document.getElementById("withdraws");
-    withdrawsDiv.innerHTML = withdraws.map(w => `
-      <div class="withdraw">${w.user} - ${w.amount} BTC</div>
-    `).join("");
-  } catch (err) {
-    console.error("Erro ao carregar dados:", err);
-  }
+// Carregar levantamentos
+fetch("/api/withdrawals")
+  .then(res => res.json())
+  .then(withdrawals => {
+    const withdrawalsUl = document.getElementById("withdrawals");
+    withdrawals.forEach(w => {
+      const li = document.createElement("li");
+      li.textContent = `${w.user}: ${w.amount}`;
+      withdrawalsUl.appendChild(li);
+    });
+  });
+
+// Função de compra (exemplo)
+function buyPlan(planId) {
+  alert(`Plano ${planId} comprado! (integração futura com backend)`);
 }
-
-// Função para comprar plano
-async function buyPlan(planId) {
-  alert(`Comprar plano ${planId} - implementar pagamento real`);
-  // Aqui você chamaria sua API de compra de plano e atualizaria saldo
-}
-
-loadData();
 </script>
 
 </body>
