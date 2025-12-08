@@ -1,82 +1,31 @@
 import express from "express";
 import mongoose from "mongoose";
-import bodyParser from "body-parser";
-import fetch from "node-fetch"; // para chamadas externas (PayPal API)
+import { getPlans, buyPlan, getUserPlans } from "./bytesPlan.js";
 
 const app = express();
+app.use(express.json());
+
 const PORT = process.env.PORT || 10000;
-const MONGO_URI = process.env.MONGO_URI;
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-app.use(bodyParser.json());
-
-// --- MongoDB --- 
-mongoose.connect(MONGO_URI)
-  .then(() => console.log("MongoDB conectado com sucesso!"))
-  .catch(err => console.log("Erro ao conectar MongoDB:", err));
-
-// --- Schemas ---
-const planSchema = new mongoose.Schema({
-  name: String,
-  price: Number,
-  profitPercent: Number,
-  durationDays: Number,
-  withdrawDelayDays: Number
-});
-const Plan = mongoose.model("Plan", planSchema);
-
-const purchaseSchema = new mongoose.Schema({
-  userId: String,
-  planId: String,
-  paymentMethod: String,
-  status: { type: String, default: "pendente" },
-  startDate: Date,
-  withdrawAvailableDate: Date
-});
-const Purchase = mongoose.model("Purchase", purchaseSchema);
-
-// --- Rotas ---
-
-// Listar planos
+// Rotas
 app.get("/plans", async (req, res) => {
-  const plans = await Plan.find({});
+  const plans = await getPlans();
   res.json(plans);
 });
 
-// Comprar plano
-app.post("/buy-plan", async (req, res) => {
-  const { userId, planId, paymentMethod } = req.body;
-  const plan = await Plan.findById(planId);
-  if (!plan) return res.status(404).json({ error: "Plano não encontrado" });
-
-  // Criar compra pendente
-  const purchase = new Purchase({
-    userId,
-    planId,
-    paymentMethod,
-    startDate: new Date(),
-    withdrawAvailableDate: new Date(Date.now() + plan.withdrawDelayDays * 24*60*60*1000)
-  });
-  await purchase.save();
-
-  if (paymentMethod === "paypal") {
-    // Criar pagamento PayPal
-    const paypalLink = `https://www.paypal.com/pay?amount=${plan.price}&item=${plan.name}`;
-    return res.json({ message: "Compra iniciada", paymentLink: paypalLink });
+app.post("/buy/:planId", async (req, res) => {
+  try {
+    const userPlan = await buyPlan(req.body.userId, req.params.planId);
+    res.json(userPlan);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
-
-  if (paymentMethod === "crypto") {
-    // Criar endereço BTC/ETH fictício (exemplo)
-    const cryptoAddress = "bc1qexemplo1234567890"; 
-    return res.json({ message: "Compra iniciada", cryptoAddress });
-  }
-
-  res.status(400).json({ error: "Método de pagamento inválido" });
 });
 
-// Listar compras de usuário
-app.get("/purchases/:userId", async (req, res) => {
-  const purchases = await Purchase.find({ userId: req.params.userId });
-  res.json(purchases);
+app.get("/user-plans/:userId", async (req, res) => {
+  const plans = await getUserPlans(req.params.userId);
+  res.json(plans);
 });
 
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
