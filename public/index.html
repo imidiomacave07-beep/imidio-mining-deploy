@@ -1,94 +1,71 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Imidio Mining Platform</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
-    header { background: #111; color: #fff; padding: 10px; }
-    h1 { margin: 0; }
-    main { margin-top: 20px; }
-    section { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    h2 { margin-top: 0; }
-    table { width: 100%; border-collapse: collapse; }
-    table th, table td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
-  </style>
+<meta charset="UTF-8">
+<title>Imidio Mining Platform</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+  h1, h2 { color: #333; }
+  .plan { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fff; }
+  button { margin-top: 5px; padding: 6px 12px; cursor: pointer; }
+</style>
 </head>
 <body>
-  <header>
-    <h1>Imidio Mining Platform</h1>
-  </header>
 
-  <main>
-    <section id="wallet">
-      <h2>Carteira BTC</h2>
-      <p id="balance">0 BTC ≈ $0.00</p>
-    </section>
+<h1>Bem-vindo, <span id="userName">Usuário</span>!</h1>
+<p>Saldo: <span id="balance">0</span> Coins</p>
 
-    <section id="plans">
-      <h2>Planos</h2>
-      <div id="plan-list"></div>
-    </section>
+<h2>Planos Disponíveis</h2>
+<div id="plans"></div>
 
-    <section id="deposits">
-      <h2>Depósitos mais recentes</h2>
-      <table id="deposit-table">
-        <thead>
-          <tr><th>Usuário</th><th>Montante</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
+<script>
+const userId = "ID_DO_SEU_USUARIO"; // Coloque o ID do usuário real
+const userNameSpan = document.getElementById("userName");
+const balanceSpan = document.getElementById("balance");
 
-    <section id="withdrawals">
-      <h2>Últimos levantamentos</h2>
-      <table id="withdraw-table">
-        <thead>
-          <tr><th>Usuário</th><th>Montante</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
-  </main>
+// Carregar usuário
+fetch(`/api/users/${userId}`)
+  .then(res => res.json())
+  .then(user => {
+    userNameSpan.innerText = user.name;
+    balanceSpan.innerText = user.balance;
+  });
 
-  <script>
-    // === Placeholder de dados dinâmicos do backend ===
-    const walletBalance = { btc: 0.0072130169, usd: 656.32 };
-    const plans = [
-      { name: "Plano Bronze", price: 10, profitPercent: 20, durationDays: 180, withdrawDelayDays: 10 },
-      { name: "Plano Prata", price: 50, profitPercent: 30, durationDays: 180, withdrawDelayDays: 10 },
-      { name: "Plano Ouro", price: 100, profitPercent: 50, durationDays: 180, withdrawDelayDays: 10 }
-    ];
-    const deposits = []; // preencher via backend
-    const withdrawals = []; // preencher via backend
-
-    // === Atualiza carteira ===
-    document.getElementById("balance").textContent = `${walletBalance.btc} BTC ≈ $${walletBalance.usd}`;
-
-    // === Lista de planos ===
-    const planList = document.getElementById("plan-list");
+// Carregar planos
+fetch("/api/plans")
+  .then(res => res.json())
+  .then(plans => {
+    const plansDiv = document.getElementById("plans");
     plans.forEach(plan => {
       const div = document.createElement("div");
-      div.innerHTML = `<strong>${plan.name}</strong>: $${plan.price} - ${plan.profitPercent}% lucro em ${plan.durationDays} dias (Saque: ${plan.withdrawDelayDays} dias)`;
-      planList.appendChild(div);
+      div.className = "plan";
+      div.innerHTML = `
+        <strong>${plan.name}</strong><br>
+        Preço: $${plan.price}<br>
+        Lucro: ${plan.profitPercent}% em ${plan.durationDays} dias (Saque: ${plan.withdrawDelayDays} dias)<br>
+        <button onclick="buyPlan('${plan._id}')">Comprar</button>
+      `;
+      plansDiv.appendChild(div);
     });
+  });
 
-    // === Depositos ===
-    const depositTableBody = document.querySelector("#deposit-table tbody");
-    deposits.forEach(dep => {
-      const row = document.createElement("tr");
-      row.innerHTML = `<td>${dep.user}</td><td>${dep.amount}</td>`;
-      depositTableBody.appendChild(row);
-    });
+function buyPlan(planId) {
+  fetch("/api/buy-plan", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, planId })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.error) {
+      alert(data.error);
+    } else {
+      alert(data.message);
+      balanceSpan.innerText = parseFloat(balanceSpan.innerText) - data.stake.price;
+    }
+  });
+}
+</script>
 
-    // === Levantamentos ===
-    const withdrawTableBody = document.querySelector("#withdraw-table tbody");
-    withdrawals.forEach(wd => {
-      const row = document.createElement("tr");
-      row.innerHTML = `<td>${wd.user}</td><td>${wd.amount}</td>`;
-      withdrawTableBody.appendChild(row);
-    });
-  </script>
 </body>
 </html>
