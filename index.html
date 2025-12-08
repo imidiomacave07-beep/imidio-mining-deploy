@@ -6,52 +6,133 @@
 <style>
   body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
   h1, h2 { color: #333; }
-  button { margin: 5px 0; padding: 8px 12px; cursor: pointer; }
-  .plan { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+  input, button { padding: 6px; margin: 4px 0; }
+  .plan { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fff; }
+  #plans { margin-top: 10px; }
+  #dashboard { display: none; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
 </style>
 </head>
 <body>
-<h1>Bem-vindo, <span id="userName">Usuário</span>!</h1>
-<p>Saldo: <span id="balance">0</span> Coins</p>
 
-<h2>Planos Disponíveis</h2>
-<div id="plans"></div>
+<h1>Bem-vindo à Imidio Mining Platform</h1>
+
+<div id="loginSection">
+  <h2>Login</h2>
+  <input type="email" id="email" placeholder="Email" required><br>
+  <input type="password" id="password" placeholder="Senha" required><br>
+  <button onclick="login()">Entrar</button>
+  <p id="loginMessage" style="color:red;"></p>
+</div>
+
+<div id="dashboard">
+  <h2>Olá, <span id="userName">Usuário</span>!</h2>
+  <p>Carteira BTC: <span id="btcBalance">0.0072130169</span> BTC ≈ $<span id="usdBalance">656.32</span></p>
+
+  <h2>Planos Disponíveis</h2>
+  <div id="plans"></div>
+
+  <h2>Depósitos mais recentes</h2>
+  <table>
+    <thead>
+      <tr><th>Usuário</th><th>Montante</th></tr>
+    </thead>
+    <tbody id="recentDeposits"></tbody>
+  </table>
+
+  <h2>Últimos levantamentos</h2>
+  <table>
+    <thead>
+      <tr><th>Usuário</th><th>Montante</th></tr>
+    </thead>
+    <tbody id="recentWithdrawals"></tbody>
+  </table>
+</div>
 
 <script>
-// Simulação de dados que viria do MongoDB
-const user = { id: "123", name: "Imidio", balance: 0 };
+// Dados simulados
+const user = { name: "Imidio", balanceBTC: 0.0072130169, balanceUSD: 656.32 };
 const plans = [
-  { id: 1, name: "Bronze", price: 10, profitPercent: 20 },
-  { id: 2, name: "Prata", price: 50, profitPercent: 30 },
-  { id: 3, name: "Ouro", price: 100, profitPercent: 50 }
+  { id: 1, name: "Bronze", priceUSD: 10, profitPercent: 20, durationDays: 180, withdrawDelayDays: 10 },
+  { id: 2, name: "Prata", priceUSD: 50, profitPercent: 30, durationDays: 180, withdrawDelayDays: 10 },
+  { id: 3, name: "Ouro", priceUSD: 100, profitPercent: 50, durationDays: 180, withdrawDelayDays: 10 }
+];
+const recentDeposits = [
+  { user: "yiyi05", amount: "10 USD" },
+  { user: "Gillebhai", amount: "8 USD" },
+  { user: "Pnicil007", amount: "10 USD" }
+];
+const recentWithdrawals = [
+  { user: "Prolificenoch", amount: "0.01446 BTC" },
+  { user: "Alfa123", amount: "0.0007162 BTC" },
+  { user: "Kaka123", amount: "0.00054 BTC" }
 ];
 
-document.getElementById("userName").innerText = user.name;
-document.getElementById("balance").innerText = user.balance;
+// Função de login
+function login() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-const plansDiv = document.getElementById("plans");
-plans.forEach(plan => {
-  const div = document.createElement("div");
-  div.className = "plan";
-  div.innerHTML = `
-    <strong>${plan.name}</strong><br>
-    Preço: $${plan.price}<br>
-    Lucro: ${plan.profitPercent}%<br>
-    <button onclick="buyPlan(${plan.id})">Comprar</button>
-  `;
-  plansDiv.appendChild(div);
-});
+  if(email && password) { // qualquer email/senha funciona na simulação
+    document.getElementById("loginSection").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+    document.getElementById("userName").innerText = user.name;
+    document.getElementById("btcBalance").innerText = user.balanceBTC;
+    document.getElementById("usdBalance").innerText = user.balanceUSD;
 
-function buyPlan(planId) {
-  const plan = plans.find(p => p.id === planId);
-  if (user.balance >= plan.price) {
-    user.balance -= plan.price;
-    document.getElementById("balance").innerText = user.balance;
-    alert(`Plano ${plan.name} comprado!`);
+    loadPlans();
+    loadRecentDeposits();
+    loadRecentWithdrawals();
   } else {
-    alert("Saldo insuficiente!");
+    document.getElementById("loginMessage").innerText = "Por favor, preencha todos os campos.";
   }
 }
+
+// Carrega planos
+function loadPlans() {
+  const plansDiv = document.getElementById("plans");
+  plansDiv.innerHTML = "";
+  plans.forEach(plan => {
+    const div = document.createElement("div");
+    div.className = "plan";
+    div.innerHTML = `
+      <strong>${plan.name}</strong><br>
+      Preço: $${plan.priceUSD}<br>
+      Lucro: ${plan.profitPercent}% em ${plan.durationDays} dias<br>
+      Saque disponível após: ${plan.withdrawDelayDays} dias<br>
+      <button onclick="buyPlan(${plan.id})">Comprar</button>
+    `;
+    plansDiv.appendChild(div);
+  });
+}
+
+// Comprar plano
+function buyPlan(planId) {
+  const plan = plans.find(p => p.id === planId);
+  alert(`Plano ${plan.name} comprado com sucesso!`);
+}
+
+// Carrega depósitos recentes
+function loadRecentDeposits() {
+  const tbody = document.getElementById("recentDeposits");
+  recentDeposits.forEach(dep => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${dep.user}</td><td>${dep.amount}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// Carrega levantamentos recentes
+function loadRecentWithdrawals() {
+  const tbody = document.getElementById("recentWithdrawals");
+  recentWithdrawals.forEach(wd => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${wd.user}</td><td>${wd.amount}</td>`;
+    tbody.appendChild(tr);
+  });
+}
 </script>
+
 </body>
 </html>
