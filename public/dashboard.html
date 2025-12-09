@@ -15,17 +15,28 @@
 
     <h2>Planos Disponíveis</h2>
     <div id="plans"></div>
+
+    <button id="logoutBtn">Sair</button>
 </div>
 
 <script>
-    // Simulação do login (no futuro isso virá do backend)
     const user = JSON.parse(localStorage.getItem("user"));
 
+    // Se não tiver login → vai para login
     if (!user) {
-        window.location.href = "login.html"; // se não fez login, volta para login
+        window.location.href = "login.html";
     } else {
+        // Mostrar dashboard
         document.getElementById("user-area").style.display = "block";
+
+        // Mostrar nome e saldo
         document.getElementById("welcome").textContent = "Bem-vindo, " + user.name + "!";
         document.getElementById("balance").textContent = "Saldo: " + user.balance + " Coins";
     }
+
+    // Botão logout
+    document.getElementById("logoutBtn").onclick = () => {
+        localStorage.removeItem("user");
+        window.location.href = "login.html";
+    };
 </script>
