@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Login - Imidio Mining</title>
+</head>
+<body>
+<h1>Login</h1>
+<form id="loginForm">
+  <input type="text" id="name" placeholder="Nome" required>
+  <input type="number" id="balance" placeholder="Saldo inicial" required>
+  <button type="submit">Entrar</button>
+</form>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const user = {
+        name: document.getElementById("name").value,
+        balance: Number(document.getElementById("balance").value)
+    };
+    localStorage.setItem("user", JSON.stringify(user));
+    window.location.href = "dashboard.html";
+});
+</script>
+</body>
+</html>
