@@ -1,92 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<title>Dashboard - Imidio Mining</title>
-<style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
-  h1, h2 { color: #333; }
-  .menu a { margin-right: 15px; text-decoration: none; color: #0077cc; }
-  .plan { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fff; }
-  button { margin-top: 5px; padding: 5px 10px; cursor: pointer; }
-</style>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
 </head>
 <body>
 
-<div id="user-area" style="display:none;">
-  <h1 id="welcome"></h1>
-  <p id="balance"></p>
+    <h2 id="welcome">Bem-vindo!</h2>
+    <p id="balance">Saldo: 0 Coins</p>
 
-  <hr>
+    <div id="plans">
+        <h3>Planos Disponíveis</h3>
+    </div>
 
-  <nav class="menu">
-      <a href="deposit.html">Depósito</a>
-      <a href="mining.html">Mineração</a>
-      <a href="contact.html">Contacto</a>
-      <a href="dashboard.html">Painel</a>
-      <button id="logoutBtn">Logout</button>
-  </nav>
-
-  <hr>
-
-  <h2>Planos Disponíveis</h2>
-  <div id="plans"></div>
-</div>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    if (!user) {
-        window.location.href = "login.html"; // volta para login se não estiver logado
-        return;
-    }
-
-    // Mostrar área do usuário
-    document.getElementById("user-area").style.display = "block";
-    document.getElementById("welcome").textContent = "Bem-vindo, " + user.name + "!";
-    document.getElementById("balance").textContent = "Saldo: " + user.balance + " Coins";
-
-    // Planos
-    const plans = [
-        { name: "Bronze", price: 10, profitPercent: 20 },
-        { name: "Prata", price: 50, profitPercent: 30 },
-        { name: "Ouro", price: 100, profitPercent: 50 }
-    ];
-
-    const plansDiv = document.getElementById("plans");
-    plans.forEach(plan => {
-        const div = document.createElement("div");
-        div.className = "plan";
-        div.innerHTML = `
-            <strong>${plan.name}</strong><br>
-            Preço: $${plan.price}<br>
-            Lucro: ${plan.profitPercent}%<br>
-            <button onclick="buyPlan('${plan.name}', ${plan.price})">Comprar</button>
-        `;
-        plansDiv.appendChild(div);
-    });
-});
-
-// Função comprar plano
-function buyPlan(name, price) {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user.balance >= price) {
-        user.balance -= price;
-        localStorage.setItem("user", JSON.stringify(user));
-        alert(`Você comprou o plano ${name} por $${price}`);
-        document.getElementById("balance").textContent = "Saldo: " + user.balance + " Coins";
-    } else {
-        alert("Saldo insuficiente!");
-    }
-}
-
-// Logout
-document.getElementById("logoutBtn").onclick = () => {
-    localStorage.removeItem("user");
-    window.location.href = "login.html";
-};
-</script>
-
+    <script src="/dashboard.js"></script>
 </body>
 </html>
