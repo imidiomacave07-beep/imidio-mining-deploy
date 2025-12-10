@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Login - Imidio Mining</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+  input, button { display: block; margin: 10px 0; padding: 8px; }
+</style>
+</head>
+<body>
+<h1>Login</h1>
+<input type="text" id="name" placeholder="Nome de usuário">
+<input type="number" id="balance" placeholder="Saldo inicial">
+<button id="loginBtn">Login</button>
+
+<script>
+document.getElementById("loginBtn").onclick = () => {
+    const name = document.getElementById("name").value;
+    const balance = parseFloat(document.getElementById("balance").value) || 0;
+
+    if(!name) {
+        alert("Digite seu nome");
+        return;
+    }
+
+    // Salva usuário no localStorage
+    const user = { name, balance, minerando: false };
+    localStorage.setItem("user", JSON.stringify(user));
+
+    // Redireciona para o dashboard
+    window.location.href = "dashboard.html";
+};
+</script>
+</body>
+</html>
