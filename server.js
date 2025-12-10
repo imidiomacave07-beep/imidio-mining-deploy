@@ -9,11 +9,12 @@ const PORT = process.env.PORT || 10000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Servir arquivos públicos
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
 // Conectar MongoDB
-const mongoUri = process.env.MONGO_URI || "mongodb+srv://imidiomacave:84882990Ma@cluster0.fqqvnqa.mongodb.net/mining?retryWrites=true&w=majority";
+const mongoUri = process.env.MONGO_URI || "mongodb+srv://usuario:senha@cluster.mongodb.net/mining?retryWrites=true&w=majority";
 mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("MongoDB conectado!"))
   .catch(err => console.error("Erro MongoDB:", err));
@@ -29,6 +30,8 @@ const planSchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema({
   name: String,
+  email: String,
+  password: String,
   balance: Number
 });
 
@@ -45,15 +48,10 @@ const Plan = mongoose.model("Plan", planSchema);
 const User = mongoose.model("User", userSchema);
 const Stake = mongoose.model("Stake", stakeSchema);
 
-// Rotas
+// Rotas API
 app.get("/api/plans", async (req, res) => {
   const plans = await Plan.find({});
   res.json(plans);
-});
-
-app.get("/api/users/:userId", async (req, res) => {
-  const user = await User.findById(req.params.userId);
-  res.json(user);
 });
 
 app.post("/api/buy-plan", async (req, res) => {
@@ -81,5 +79,10 @@ app.post("/api/buy-plan", async (req, res) => {
   res.json({ message: "Plano comprado com sucesso!", stake });
 });
 
-// Start
+// Redireciona raiz para login
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// Start server
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
