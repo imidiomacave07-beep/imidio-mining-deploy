@@ -6,27 +6,30 @@
 </head>
 <body>
 <h1>Escolha seu Plano</h1>
+
 <div>
   <h2>Básico</h2>
   <p>$10 / clique</p>
-  <button onclick="buy('Basico', 10)">Comprar</button>
+  <button onclick="buy('Básico', 10)">Comprar</button>
 </div>
+
 <div>
   <h2>Pro</h2>
-  <p>$100 / clique</p>
-  <button onclick="buy('Pro', 100)">Comprar</button>
+  <p>$50 / clique</p>
+  <button onclick="buy('Pro', 50)">Comprar</button>
 </div>
+
 <div>
   <h2>Premium</h2>
-  <p>$5000 / clique</p>
-  <button onclick="buy('Premium', 5000)">Comprar</button>
+  <p>$100 / clique</p>
+  <button onclick="buy('Premium', 100)">Comprar</button>
 </div>
 
 <a href="dashboard.html">Voltar</a>
 
 <script>
 function buy(plan, amount) {
-  alert(`Você comprou o plano ${plan} por $${amount}`);
+    alert(`Você comprou o plano ${plan} por $${amount}`);
 }
 </script>
 </body>
