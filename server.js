@@ -4,16 +4,16 @@ const app = express();
 
 app.use(express.json());
 
-// Arquivos estáticos na raiz
+// Servir arquivos estáticos da pasta raiz
 app.use(express.static(__dirname));
 
-// Rota principal
+// Rota principal (index)
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// Porta Render
-const port = process.env.PORT || 10000;
-app.listen(port, () => {
-    console.log("Servidor rodando na porta " + port);
+// Porta usada pelo Render
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+    console.log("Servidor rodando na porta " + PORT);
 });
