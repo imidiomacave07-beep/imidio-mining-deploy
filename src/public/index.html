@@ -7,18 +7,20 @@
 <body>
 <h1>Login</h1>
 <form id="loginForm">
-  <input type="text" id="name" placeholder="Nome" required>
-  <input type="number" id="balance" placeholder="Saldo inicial" required>
-  <button type="submit">Entrar</button>
+    <input type="email" id="email" placeholder="Email" required><br><br>
+    <input type="password" id="password" placeholder="Senha" required><br><br>
+    <button type="submit">Entrar</button>
 </form>
 
 <script>
-document.getElementById("loginForm").addEventListener("submit", e => {
+document.getElementById("loginForm").addEventListener("submit", (e) => {
     e.preventDefault();
-    const user = {
-        name: document.getElementById("name").value,
-        balance: Number(document.getElementById("balance").value)
-    };
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    // Simulação de login (no futuro conectar com backend)
+    const user = { name: "Imidio", email, balance: 100 };
     localStorage.setItem("user", JSON.stringify(user));
     window.location.href = "dashboard.html";
 });
