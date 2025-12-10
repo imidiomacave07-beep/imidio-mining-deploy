@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Login - Imidio Mining</title>
+<style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .login-box { background: #fff; padding: 20px; border: 1px solid #ccc; width: 300px; }
+    input { width: 100%; padding: 8px; margin: 5px 0; }
+    button { padding: 10px; width: 100%; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div class="login-box">
+    <h2>Login</h2>
+    <input type="text" id="name" placeholder="Nome de usuário">
+    <input type="number" id="balance" placeholder="Saldo inicial">
+    <button id="loginBtn">Entrar</button>
+</div>
+
+<script>
+document.getElementById("loginBtn").addEventListener("click", () => {
+    const name = document.getElementById("name").value.trim();
+    const balance = parseFloat(document.getElementById("balance").value);
+
+    if (!name || isNaN(balance)) {
+        alert("Preencha todos os campos corretamente!");
+        return;
+    }
+
+    const user = { name, balance };
+    localStorage.setItem("user", JSON.stringify(user));
+
+    window.location.href = "dashboard.html"; // redireciona para o dashboard
+});
+</script>
+
+</body>
+</html>
