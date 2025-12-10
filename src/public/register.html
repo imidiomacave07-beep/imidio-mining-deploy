@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Criar Conta - Imidio Mining</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+  .box { background: #fff; padding: 20px; border-radius: 8px; width: 300px; margin: auto; }
+  input { width: 100%; padding: 8px; margin: 5px 0; }
+  button { width: 100%; padding: 10px; background: #0077cc; color: #fff; border: none; cursor: pointer; }
+  button:hover { background: #005fa3; }
+  a { color: #0077cc; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="box">
+  <h2>Criar Conta</h2>
+
+  <input type="text" id="name" placeholder="Seu nome" required>
+  <input type="email" id="email" placeholder="Seu email" required>
+  <input type="password" id="password" placeholder="Sua senha" required>
+
+  <button onclick="register()">Criar Conta</button>
+
+  <p>Já tem conta? <a href="login.html">Entrar</a></p>
+</div>
+
+<script>
+function register() {
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    if (!name || !email || !password) {
+        alert("Preencha todos os campos!");
+        return;
+    }
+
+    const user = {
+        name: name,
+        email: email,
+        password: password,
+        balance: 0,
+        minerando: false
+    };
+
+    localStorage.setItem("user", JSON.stringify(user));
+
+    alert("Conta criada com sucesso!");
+
+    window.location.href = "dashboard.html";
+}
+</script>
+
+</body>
+</html>
