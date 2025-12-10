@@ -1,39 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard de Mineração</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<title>Dashboard - Imidio Mining</title>
+<link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
 
-<h1>Dashboard de Mineração</h1>
+<header>
+  <h1 id="welcome">Bem-vindo, Usuário!</h1>
+  <p id="balance">Saldo: 0 Coins</p>
 
-<button id="startBtn">Iniciar Mineração</button>
-<button id="stopBtn">Parar Mineração</button>
+  <nav class="menu">
+    <a href="deposito.html">Depósito</a>
+    <a href="mineracao.html">Mineração</a>
+    <a href="contato.html">Contacto</a>
+    <a href="planos.html">Planos</a>
+  </nav>
+  <hr>
+</header>
 
-<div id="status">Carregando...</div>
+<section id="content">
+  <h2>Planos Disponíveis</h2>
+  <div id="plans"></div>
+</section>
 
-<script>
-async function updateStatus() {
-  const res = await fetch("/api/mining/status");
-  const data = await res.json();
-  document.getElementById("status").innerText =
-    "Status da mineração: " + data.status;
-}
-
-updateStatus();
-setInterval(updateStatus, 3000);
-
-document.getElementById("startBtn").onclick = async () => {
-  await fetch("/api/mining/start-mining", { method: "POST" });
-  updateStatus();
-};
-document.getElementById("stopBtn").onclick = async () => {
-  await fetch("/api/mining/stop-mining", { method: "POST" });
-  updateStatus();
-};
-</script>
-
+<script src="dashboard.js"></script>
 </body>
 </html>
