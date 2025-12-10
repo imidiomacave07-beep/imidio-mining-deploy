@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     const user = JSON.parse(localStorage.getItem("user"));
+
     if (!user) {
-        window.location.href = "index.html";
+        window.location.href = "index.html"; // se não fez login, volta para login
         return;
     }
 
@@ -18,27 +19,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const plansDiv = document.getElementById("plans");
     plans.forEach(plan => {
         const div = document.createElement("div");
+        div.className = "plan";
         div.innerHTML = `
             <strong>${plan.name}</strong> - $${plan.price} - ${plan.profitPercent}% lucro
             <button onclick="buyPlan('${plan.name}', ${plan.price})">Comprar</button>
         `;
         plansDiv.appendChild(div);
     });
-
-    document.getElementById("logoutBtn").onclick = () => {
-        localStorage.removeItem("user");
-        window.location.href = "index.html";
-    };
 });
 
-function buyPlan(name, price) {
+function buyPlan(name, price){
     const user = JSON.parse(localStorage.getItem("user"));
-    if (user.balance >= price) {
-        user.balance -= price;
-        localStorage.setItem("user", JSON.stringify(user));
-        alert(`Você comprou o plano ${name} por $${price}`);
-        document.getElementById("balance").textContent = "Saldo: " + user.balance + " Coins";
-    } else {
+
+    if(user.balance < price){
         alert("Saldo insuficiente!");
+        return;
     }
+
+    user.balance -= price;
+    localStorage.setItem("user", JSON.stringify(user));
+    document.getElementById("balance").textContent = "Saldo: " + user.balance + " Coins";
+
+    alert(`Você comprou o plano ${name} por $${price}\nMétodos de pagamento: PayPal ou Criptomoedas`);
 }
+
+// Logout
+document.getElementById("logoutBtn").onclick = () => {
+    localStorage.removeItem("user");
+    window.location.href = "index.html";
+};
