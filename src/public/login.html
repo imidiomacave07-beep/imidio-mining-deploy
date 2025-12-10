@@ -2,48 +2,44 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login - Imidio Mining</title>
-<style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
-  .box { background: #fff; padding: 20px; border-radius: 8px; width: 300px; margin: auto; }
-  input { width: 100%; padding: 8px; margin: 5px 0; }
-  button { width: 100%; padding: 10px; background: #0077cc; color: #fff; border: none; cursor: pointer; }
-  button:hover { background: #005fa3; }
-  a { color: #0077cc; text-decoration: none; }
-</style>
 </head>
 <body>
+<h1>Login</h1>
 
-<div class="box">
-  <h2>Entrar</h2>
+<form id="loginForm">
+    <label>Email:</label>
+    <input type="email" id="email" required><br><br>
 
-  <input type="email" id="email" placeholder="Seu email">
-  <input type="password" id="password" placeholder="Senha">
+    <label>Senha:</label>
+    <input type="password" id="password" required><br><br>
 
-  <button onclick="login()">Entrar</button>
+    <button type="submit">Entrar</button>
+</form>
 
-  <p>Não tem conta? <a href="register.html">Criar conta</a></p>
-</div>
+<p>Não tem conta? <a href="signup.html">Criar Conta</a></p>
 
 <script>
-function login() {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const email = document.getElementById("email").value.trim();
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
-    if (!user) {
-        alert("Nenhuma conta encontrada! Crie uma conta.");
-        return;
-    }
+    const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+    });
 
-    if (email === user.email && password === user.password) {
-        alert("Login bem-sucedido!");
-        window.location.href = "dashboard.html";
+    const data = await res.json();
+    if (res.ok) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+        window.location.href = "dashboard.html"; // redireciona após login
     } else {
-        alert("Email ou senha incorretos!");
+        alert(data.error);
     }
-}
+});
 </script>
-
 </body>
 </html>
