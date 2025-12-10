@@ -1,12 +1,39 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<title>Depósito - Imidio Mining</title>
+    <meta charset="UTF-8">
+    <title>Depósito</title>
 </head>
 <body>
-<h1>Depósito</h1>
-<p>Página em construção.</p>
-<a href="dashboard.html">Voltar</a>
+
+<h2>Depósitos</h2>
+<p>Escolha um método para adicionar saldo na sua conta.</p>
+
+<h3>💰 Depósito por Criptomoedas</h3>
+<p>Envie para o endereço abaixo:</p>
+
+<strong>Endereço USDT (TRC20):</strong>
+<p id="usdt">TRxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</p>
+<button onclick="copyText('usdt')">Copiar</button>
+
+<br><br>
+
+<strong>Endereço Bitcoin (BTC):</strong>
+<p id="btc">bc1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</p>
+<button onclick="copyText('btc')">Copiar</button>
+
+<hr>
+
+<h3>💳 Depósito via PayPal</h3>
+<p>Enviar pagamento para o e-mail abaixo:</p>
+
+<strong id="paypal">seu-email-paypal@example.com</strong>
+<button onclick="copyText('paypal')">Copiar</button>
+
+<hr>
+
+<button onclick="voltar()">Voltar ao Dashboard</button>
+
+<script src="/deposit.js"></script>
 </body>
 </html>
