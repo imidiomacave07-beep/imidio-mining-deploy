@@ -1,18 +1,37 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
+<meta charset="UTF-8">
+<title>Dashboard - Imidio Mining</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+  h1, h2 { color: #333; }
+  .menu a, button { margin-right: 15px; text-decoration: none; color: #0077cc; cursor: pointer; }
+  .plan { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fff; }
+</style>
 </head>
 <body>
 
-    <h2 id="welcome">Bem-vindo!</h2>
-    <p id="balance">Saldo: 0 Coins</p>
+<div id="user-area" style="display:none;">
+  <h1 id="welcome"></h1>
+  <p id="balance"></p>
 
-    <div id="plans">
-        <h3>Planos Disponíveis</h3>
-    </div>
+  <hr>
 
-    <script src="/dashboard.js"></script>
+  <nav class="menu">
+      <a href="deposit.html">Depósito</a>
+      <a href="mining.html">Mineração</a>
+      <a href="contact.html">Contacto</a>
+      <a href="dashboard.html">Painel</a>
+      <button id="logoutBtn">Logout</button>
+  </nav>
+
+  <hr>
+
+  <h2>Planos Disponíveis</h2>
+  <div id="plans"></div>
+</div>
+
+<script src="scripts.js"></script>
 </body>
 </html>
