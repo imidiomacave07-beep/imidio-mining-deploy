@@ -1,41 +1,30 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) {
-        window.location.href = "index.html";
-        return;
-    }
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard - Imidio Mining</title>
+</head>
+<body>
 
-    document.getElementById("welcome").innerText = "Bem-vindo, " + user.name + "!";
-    document.getElementById("balance").innerText = "Saldo: " + user.balance + " Coins";
+<div id="user-area" style="display:none;">
+  <h1 id="welcome"></h1>
+  <p id="balance"></p>
 
-    const plans = [
-        { id: 1, name: "Bronze", price: 10, profitPercent: 20 },
-        { id: 2, name: "Prata", price: 50, profitPercent: 30 },
-        { id: 3, name: "Ouro", price: 100, profitPercent: 50 }
-    ];
+  <hr>
+  <nav class="menu">
+      <a href="deposit.html">Depósito</a>
+      <a href="mining.html">Mineração</a>
+      <a href="contact.html">Contacto</a>
+      <a href="dashboard.html">Painel</a>
+      <button id="logoutBtn">Logout</button>
+  </nav>
+  <hr>
 
-    const plansDiv = document.getElementById("plans");
-    plans.forEach(plan => {
-        const div = document.createElement("div");
-        div.className = "plan";
-        div.innerHTML = `
-            <strong>${plan.name}</strong><br>
-            Preço: $${plan.price}<br>
-            Lucro: ${plan.profitPercent}%<br>
-            <button onclick="buyPlan(${plan.id})">Comprar</button>
-        `;
-        plansDiv.appendChild(div);
-    });
+  <h2>Planos Disponíveis</h2>
+  <div id="plans"></div>
+</div>
 
-    window.buyPlan = function(planId) {
-        const plan = plans.find(p => p.id === planId);
-        if (user.balance >= plan.price) {
-            user.balance -= plan.price;
-            localStorage.setItem("user", JSON.stringify(user));
-            document.getElementById("balance").innerText = "Saldo: " + user.balance + " Coins";
-            alert(`Plano ${plan.name} comprado!`);
-        } else {
-            alert("Saldo insuficiente!");
-        }
-    };
-});
+<script src="scripts.js"></script>
+
+</body>
+</html>
