@@ -1,18 +1,19 @@
-const https = require("https");
+// keep-alive.js
 
-const URL = "https://imidio-mining-deploy-3.onrender.com"; // seu link Render
-const INTERVAL = 25 * 60 * 1000; // 25 minutos
+const URL = "https://imidio-mining-deploy-3.onrender.com"; // sua URL do Render
+const INTERVAL = 4 * 60 * 1000; // 4 minutos
 
-function ping() {
-    https.get(URL, (res) => {
-        console.log(`[${new Date().toLocaleTimeString()}] Ping enviado, status: ${res.statusCode}`);
-    }).on("error", (err) => {
-        console.error("Erro ao pingar:", err.message);
-    });
+async function ping() {
+    try {
+        const res = await fetch(URL);
+        console.log(`[Keep-Alive] Status: ${res.status} - ${new Date().toLocaleTimeString()}`);
+    } catch (err) {
+        console.error("[Keep-Alive] Erro ao pingar:", err.message);
+    }
 }
 
-// ping imediato
+// Ping imediato
 ping();
 
-// ping a cada 25 minutos
+// Ping a cada INTERVAL
 setInterval(ping, INTERVAL);
