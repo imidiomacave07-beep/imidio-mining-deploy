@@ -4,12 +4,12 @@ const app = express();
 
 app.use(express.json());
 
-// Servir arquivos estáticos da pasta raiz
-app.use(express.static(__dirname));
+// Servir arquivos estáticos da pasta PUBLIC
+app.use(express.static(path.join(__dirname, "src", "public")));
 
 // Rota principal (index)
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "index.html"));
+    res.sendFile(path.join(__dirname, "src", "public", "index.html"));
 });
 
 // Porta usada pelo Render
