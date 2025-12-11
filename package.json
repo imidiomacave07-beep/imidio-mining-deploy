@@ -1,15 +1,12 @@
 {
-  "name": "imidio-mining-platform",
+  "name": "imidio-mining",
   "version": "1.0.0",
-  "type": "module",
-  "main": "src/server.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "keep": "node src/keep-alive.js"
+    "start": "node server.js"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
     "express": "^4.18.2",
-    "mongoose": "^7.5.0"
+    "mongoose": "^7.4.0"
   }
 }
