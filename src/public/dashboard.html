@@ -1,37 +1,34 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Dashboard - Imidio Mining</title>
-<style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
-  h1, h2 { color: #333; }
-  .menu a, button { margin-right: 15px; text-decoration: none; color: #0077cc; cursor: pointer; }
-  .plan { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fff; }
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<div id="user-area" style="display:none;">
-  <h1 id="welcome"></h1>
-  <p id="balance"></p>
-
-  <hr>
-
-  <nav class="menu">
-      <a href="deposit.html">Depósito</a>
-      <a href="mining.html">Mineração</a>
-      <a href="contact.html">Contacto</a>
-      <a href="dashboard.html">Painel</a>
-      <button id="logoutBtn">Logout</button>
+<header class="topbar">
+  <div class="brand">Imidio Mining</div>
+  <nav>
+    <a href="planos.html">Planos</a>
+    <a href="history.html">Histórico</a>
+    <a href="#" id="logout">Sair</a>
   </nav>
+</header>
 
-  <hr>
+<main class="container">
+  <h1 id="welcome">Bem-vindo, Usuário!</h1>
+  <div class="saldo card">
+    <h2 id="balance">Saldo: 0 Coins</h2>
+    <button id="btn-mine">Minerar +10 Coins</button>
+  </div>
 
-  <h2>Planos Disponíveis</h2>
-  <div id="plans"></div>
-</div>
+  <section>
+    <h2>Planos Rápidos</h2>
+    <div id="plans" class="plan-list"></div>
+  </section>
+</main>
 
-<script src="scripts.js"></script>
+<script src="dashboard.js"></script>
 </body>
 </html>
