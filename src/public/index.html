@@ -1,123 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Plataforma de Mineração</title>
-
-<style>
-    body {
-        margin: 0;
-        padding: 20px;
-        font-family: Arial, sans-serif;
-        background: #0f0f0f;
-        color: white;
-        text-align: center;
-    }
-
-    h1 {
-        margin-top: 10px;
-        font-size: 28px;
-        color: #00ffd0;
-    }
-
-    .saldo {
-        background: #1b1b1b;
-        padding: 15px;
-        margin: 20px auto;
-        width: 250px;
-        border-radius: 10px;
-        font-size: 18px;
-        border: 1px solid #00ffd0;
-    }
-
-    .planos {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        flex-wrap: wrap;
-        margin-top: 30px;
-    }
-
-    .plano {
-        background: #1c1c1c;
-        padding: 20px;
-        width: 220px;
-        border-radius: 12px;
-        border: 1px solid #00ffd0;
-        box-shadow: 0 0 15px #00ffd08a;
-        transition: 0.3s;
-    }
-
-    .plano:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 25px #00ffd0;
-    }
-
-    .plano h3 {
-        margin: 0;
-        font-size: 22px;
-        color: #00ffd0;
-    }
-
-    .plano p {
-        font-size: 16px;
-        margin: 8px 0;
-    }
-
-    .btn {
-        margin-top: 12px;
-        padding: 10px 18px;
-        background: #00ffd0;
-        color: #000;
-        border: none;
-        border-radius: 8px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-
-    .btn:hover {
-        background: white;
-    }
-</style>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Imidio Mining - Home</title>
 </head>
-
 <body>
-
-<h1>Bem-vindo, Usuário!</h1>
-
-<div class="saldo">
-    Saldo: <strong>0 Coins</strong>
-</div>
-
-<h2>Planos Disponíveis</h2>
-
-<div class="planos">
-
-    <div class="plano">
-        <h3>Plano Bronze</h3>
-        <p>Preço: $10</p>
-        <p>Lucro: 20%</p>
-        <button class="btn">Investir</button>
-    </div>
-
-    <div class="plano">
-        <h3>Plano Prata</h3>
-        <p>Preço: $50</p>
-        <p>Lucro: 30%</p>
-        <button class="btn">Investir</button>
-    </div>
-
-    <div class="plano">
-        <h3>Plano Ouro</h3>
-        <p>Preço: $100</p>
-        <p>Lucro: 50%</p>
-        <button class="btn">Investir</button>
-    </div>
-
-</div>
-
+<script>
+  // Redirect to login if not logged
+  const user = localStorage.getItem("user");
+  if (!user) {
+    window.location.href = "login.html";
+  } else {
+    window.location.href = "dashboard.html";
+  }
+</script>
+Carregando...
 </body>
 </html>
