@@ -1,45 +1,83 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Login - Imidio Mining</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<h1>Login</h1>
+<div class="card center">
+  <h1>Entrar / Criar Conta</h1>
 
-<form id="loginForm">
-    <label>Email:</label>
-    <input type="email" id="email" required><br><br>
+  <div id="auth-area">
+    <input id="email" type="email" placeholder="Email (opcional para demo)">
+    <input id="password" type="password" placeholder="Senha (opcional para demo)">
+    <input id="name" type="text" placeholder="Nome (apenas para criar conta)">
 
-    <label>Senha:</label>
-    <input type="password" id="password" required><br><br>
+    <div class="row">
+      <button onclick="doLogin()">Entrar</button>
+      <button onclick="doSignup()">Criar Conta</button>
+    </div>
 
-    <button type="submit">Entrar</button>
-</form>
-
-<p>Não tem conta? <a href="signup.html">Criar Conta</a></p>
+    <p style="font-size:0.9em;color:#ccc">Dica: para demo rápido, preencha apenas o nome e clique "Criar Conta".</p>
+  </div>
+</div>
 
 <script>
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+async function doSignup(){
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
 
-    const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-    });
+  if(!name || !password){
+    // allow quick demo: if password empty, create local user (no backend)
+    const user = { name, balance: 0 };
+    localStorage.setItem("user", JSON.stringify(user));
+    alert("Conta criada localmente (demo).");
+    window.location.href = "dashboard.html";
+    return;
+  }
 
-    const data = await res.json();
-    if (res.ok) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-        window.location.href = "dashboard.html"; // redireciona após login
-    } else {
-        alert(data.error);
-    }
-});
+  const res = await fetch('/api/auth/signup', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json' },
+    body: JSON.stringify({ name, email, password })
+  });
+  const data = await res.json();
+  if(res.ok){
+    alert("Conta criada. Faça login.");
+  } else {
+    alert(data.error || "Erro ao criar conta");
+  }
+}
+
+async function doLogin(){
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  if(!email || !password){
+    // quick demo login via local name only
+    const name = document.getElementById("name").value.trim();
+    if(!name) { alert("Digite email+senha ou apenas nome para demo."); return; }
+    const user = { name, balance: 0 };
+    localStorage.setItem("user", JSON.stringify(user));
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  const res = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+  const data = await res.json();
+  if(res.ok){
+    localStorage.setItem("user", JSON.stringify(data.user));
+    window.location.href = "dashboard.html";
+  } else {
+    alert(data.error || "Erro ao entrar");
+  }
+}
 </script>
 </body>
 </html>
