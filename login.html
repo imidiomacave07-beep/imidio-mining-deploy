@@ -1,36 +1,61 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<title>Login - Imidio Mining</title>
+<meta charset="UTF-8" />
+<title>Login</title>
+
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
-  input, button { display: block; margin: 10px 0; padding: 8px; }
+    body {
+        font-family: Arial;
+        background: #0f0f0f;
+        color: white;
+        text-align: center;
+        padding-top: 40px;
+    }
+    input {
+        padding: 10px;
+        margin: 10px;
+        width: 250px;
+        border-radius: 8px;
+        border: none;
+    }
+    button {
+        padding: 10px 25px;
+        background: #00ffd0;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
 </style>
+
 </head>
 <body>
-<h1>Login</h1>
-<input type="text" id="name" placeholder="Nome de usuário">
-<input type="number" id="balance" placeholder="Saldo inicial">
-<button id="loginBtn">Login</button>
+
+<h1>Login / Criar Conta</h1>
+
+<input type="text" id="nome" placeholder="Seu nome" />
+<br>
+<button onclick="entrar()">Entrar</button>
 
 <script>
-document.getElementById("loginBtn").onclick = () => {
-    const name = document.getElementById("name").value;
-    const balance = parseFloat(document.getElementById("balance").value) || 0;
+function entrar() {
+    const nome = document.getElementById("nome").value.trim();
 
-    if(!name) {
-        alert("Digite seu nome");
+    if (!nome) {
+        alert("Digite o seu nome!");
         return;
     }
 
-    // Salva usuário no localStorage
-    const user = { name, balance, minerando: false };
+    const user = {
+        name: nome,
+        balance: 0
+    };
+
     localStorage.setItem("user", JSON.stringify(user));
 
-    // Redireciona para o dashboard
     window.location.href = "dashboard.html";
-};
+}
 </script>
+
 </body>
 </html>
