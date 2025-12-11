@@ -1,86 +1,51 @@
+// src/authRoutes.js
 import express from "express";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
+import { User } from "./models.js";
 
 const router = express.Router();
 
-// ===============================
-//  MODEL DO USUÁRIO
-// ===============================
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  password: String,
-});
-
-const User = mongoose.model("User", userSchema);
-
-// ===============================
-//  REGISTAR NOVO UTILIZADOR
-// ===============================
-router.post("/register", async (req, res) => {
+// Signup (create user)
+router.post("/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    if (!name || !password) return res.status(400).json({ error: "Nome e senha obrigatórios" });
 
-    if (!name || !email || !password)
-      return res.json({ success: false, message: "Preencha todos os campos!" });
+    // If email provided, check duplicate
+    if (email) {
+      const exists = await User.findOne({ email });
+      if (exists) return res.status(400).json({ error: "Email já cadastrado" });
+    }
 
-    const emailExists = await User.findOne({ email });
-
-    if (emailExists)
-      return res.json({ success: false, message: "Email já registado!" });
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = new User({
-      name,
-      email,
-      password: hashedPassword,
-    });
-
-    await newUser.save();
-
-    res.json({ success: true, message: "Conta criada com sucesso!" });
-
+    const hashed = await bcrypt.hash(password, 10);
+    const user = new User({ name, email, password: hashed, balance: 0 });
+    await user.save();
+    res.json({ message: "Conta criada", userId: user._id });
   } catch (err) {
     console.error(err);
-    res.json({ success: false, message: "Erro interno no servidor" });
+    res.status(500).json({ error: "Erro ao criar conta" });
   }
 });
 
-// ===============================
-//  LOGIN DO UTILIZADOR
-// ===============================
+// Login
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ error: "Email e senha obrigatórios" });
 
     const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: "Usuário não encontrado" });
 
-    if (!user)
-      return res.json({ success: false, message: "Usuário não encontrado!" });
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
-
-    if (!passwordMatch)
-      return res.json({ success: false, message: "Palavra-passe incorreta!" });
-
-    const token = jwt.sign(
-      { id: user._id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok) return res.status(401).json({ error: "Senha incorreta" });
 
     res.json({
-      success: true,
-      message: "Login realizado com sucesso!",
-      token,
+      message: "Login ok",
+      user: { id: user._id, name: user.name, email: user.email, balance: user.balance }
     });
-
   } catch (err) {
     console.error(err);
-    res.json({ success: false, message: "Erro interno ao fazer login!" });
+    res.status(500).json({ error: "Erro ao fazer login" });
   }
 });
 
