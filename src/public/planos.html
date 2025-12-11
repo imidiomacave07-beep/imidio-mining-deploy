@@ -1,36 +1,65 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Planos - Imidio Mining</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<h1>Escolha seu Plano</h1>
+<header class="topbar">
+  <div class="brand">Imidio Mining</div>
+  <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="history.html">Histórico</a>
+  </nav>
+</header>
 
-<div>
-  <h2>Básico</h2>
-  <p>$10 / clique</p>
-  <button onclick="buy('Básico', 10)">Comprar</button>
-</div>
-
-<div>
-  <h2>Pro</h2>
-  <p>$50 / clique</p>
-  <button onclick="buy('Pro', 50)">Comprar</button>
-</div>
-
-<div>
-  <h2>Premium</h2>
-  <p>$100 / clique</p>
-  <button onclick="buy('Premium', 100)">Comprar</button>
-</div>
-
-<a href="dashboard.html">Voltar</a>
+<main class="container">
+  <h1>Planos Disponíveis</h1>
+  <div id="plans-area" class="plan-list"></div>
+</main>
 
 <script>
-function buy(plan, amount) {
-    alert(`Você comprou o plano ${plan} por $${amount}`);
+async function loadPlans(){
+  const res = await fetch("/api/plans");
+  const plans = await res.json();
+  const area = document.getElementById("plans-area");
+  area.innerHTML = "";
+  plans.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "plano card";
+    div.innerHTML = `<h3>${p.name}</h3>
+      <p>Preço: $${p.price}</p>
+      <p>Lucro: ${p.profitPercent}%</p>
+      <button onclick="buyPlan('${p._id}', ${p.price})">Comprar</button>`;
+    area.appendChild(div);
+  });
 }
+async function buyPlan(planId, price){
+  const user = JSON.parse(localStorage.getItem("user"));
+  if(!user) { window.location.href = "login.html"; return; }
+  // attempt backend purchase if user has backend id; demo handles local storage:
+  if(!user.id){
+    if(user.balance < price){ alert("Saldo insuficiente"); return; }
+    user.balance -= price;
+    localStorage.setItem("user", JSON.stringify(user));
+    alert("Plano comprado (modo demo).");
+    return;
+  }
+  const res = await fetch("/api/buy-plan", {
+    method: "POST",
+    headers: { "Content-Type":"application/json" },
+    body: JSON.stringify({ userId: user.id, planId })
+  });
+  const data = await res.json();
+  if(res.ok) {
+    alert("Plano comprado com sucesso");
+  } else {
+    alert(data.error || "Erro");
+  }
+}
+loadPlans();
 </script>
 </body>
 </html>
