@@ -2,68 +2,99 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard - Imidio Mining</title>
+<title>Dashboard</title>
+
 <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
-    h1, h2 { color: #333; }
-    nav a { margin-right: 15px; text-decoration: none; color: blue; }
-    #plans div { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background: #0f0f0f;
+        color: white;
+        text-align: center;
+    }
+
+    h1 { color: #00ffd0; }
+    .saldo {
+        background: #1b1b1b;
+        padding: 15px;
+        border-radius: 10px;
+        width: 260px;
+        margin: auto;
+        border: 1px solid #00ffd0;
+    }
+    .planos {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 40px;
+    }
+    .plano {
+        background: #1c1c1c;
+        padding: 20px;
+        width: 220px;
+        border-radius: 12px;
+        border: 1px solid #00ffd0;
+    }
+    button {
+        margin-top: 10px;
+        padding: 10px 18px;
+        background: #00ffd0;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
 </style>
+
 </head>
 <body>
 
-<div id="user-area" style="display:none;">
-    <h1 id="welcome"></h1>
-    <p id="balance"></p>
+<h1 id="welcome">Bem-vindo!</h1>
 
-    <hr>
+<div class="saldo">
+    <p id="balance">Saldo: 0 Coins</p>
+</div>
 
-    <nav class="menu">
-        <a href="deposit.html">Depósito</a>
-        <a href="mining.html">Mineração</a>
-        <a href="contact.html">Contacto</a>
-        <a href="dashboard.html">Painel</a>
-    </nav>
+<h2>Planos Disponíveis</h2>
 
-    <hr>
+<div class="planos">
+    <div class="plano">
+        <h3>Plano Bronze</h3>
+        <p>Preço: $10</p>
+        <p>Lucro: 20%</p>
+        <button onclick="investir('Bronze')">Investir</button>
+    </div>
 
-    <h2>Planos Disponíveis</h2>
-    <div id="plans"></div>
+    <div class="plano">
+        <h3>Plano Prata</h3>
+        <p>Preço: $50</p>
+        <p>Lucro: 30%</p>
+        <button onclick="investir('Prata')">Investir</button>
+    </div>
+
+    <div class="plano">
+        <h3>Plano Ouro</h3>
+        <p>Preço: $100</p>
+        <p>Lucro: 50%</p>
+        <button onclick="investir('Ouro')">Investir</button>
+    </div>
 </div>
 
 <script>
-const user = JSON.parse(localStorage.getItem("user"));
+document.addEventListener("DOMContentLoaded", () => {
+    const user = JSON.parse(localStorage.getItem("user"));
 
-if(!user) {
-    window.location.href = "login.html";
-} else {
-    document.getElementById("user-area").style.display = "block";
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
     document.getElementById("welcome").textContent = "Bem-vindo, " + user.name + "!";
     document.getElementById("balance").textContent = "Saldo: " + user.balance + " Coins";
+});
 
-    const plans = [
-        { name: "Bronze", price: 10, profitPercent: 20 },
-        { name: "Prata", price: 50, profitPercent: 30 },
-        { name: "Ouro", price: 100, profitPercent: 50 }
-    ];
-
-    const plansDiv = document.getElementById("plans");
-    plans.forEach(plan => {
-        const div = document.createElement("div");
-        div.innerHTML = `<strong>${plan.name}</strong> - $${plan.price} - Lucro ${plan.profitPercent}% <button onclick="buyPlan('${plan.name}', ${plan.price})">Comprar</button>`;
-        plansDiv.appendChild(div);
-    });
-}
-
-function buyPlan(name, price) {
-    if(user.balance >= price) {
-        user.balance -= price;
-        localStorage.setItem("user", JSON.stringify(user));
-        document.getElementById("balance").textContent = "Saldo: " + user.balance + " Coins";
-        alert(`Plano ${name} comprado com sucesso!`);
-    } else {
-        alert("Saldo insuficiente!");
-    }
+function investir(plano) {
+    alert("Você investiu no plano " + plano);
 }
 </script>
 
