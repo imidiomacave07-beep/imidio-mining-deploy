@@ -1,30 +1,90 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-<meta charset="UTF-8">
-<title>Dashboard - Imidio Mining</title>
-</head>
-<body>
+// src/public/dashboard.js
+document.addEventListener("DOMContentLoaded", async () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user) { window.location.href = "login.html"; return; }
 
-<div id="user-area" style="display:none;">
-  <h1 id="welcome"></h1>
-  <p id="balance"></p>
+  document.getElementById("welcome").textContent = "Bem-vindo, " + user.name + "!";
+  updateBalanceDisplay();
 
-  <hr>
-  <nav class="menu">
-      <a href="deposit.html">Depósito</a>
-      <a href="mining.html">Mineração</a>
-      <a href="contact.html">Contacto</a>
-      <a href="dashboard.html">Painel</a>
-      <button id="logoutBtn">Logout</button>
-  </nav>
-  <hr>
+  document.getElementById("logout").addEventListener("click", () => {
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+  });
 
-  <h2>Planos Disponíveis</h2>
-  <div id="plans"></div>
-</div>
+  document.getElementById("btn-mine").addEventListener("click", () => {
+    mineCoins(10);
+  });
 
-<script src="scripts.js"></script>
+  loadPlans();
+});
 
-</body>
-</html>
+function updateBalanceDisplay(){
+  const user = JSON.parse(localStorage.getItem("user"));
+  document.getElementById("balance").textContent = "Saldo: " + (user.balance || 0) + " Coins";
+}
+
+function mineCoins(amount){
+  const user = JSON.parse(localStorage.getItem("user"));
+  user.balance = (user.balance || 0) + amount;
+  localStorage.setItem("user", JSON.stringify(user));
+  updateBalanceDisplay();
+  alert("Você minerou +" + amount + " Coins");
+}
+
+async function loadPlans(){
+  try {
+    const res = await fetch("/api/plans");
+    if(!res.ok) return;
+    const plans = await res.json();
+    const container = document.getElementById("plans");
+    container.innerHTML = "";
+    plans.forEach(p => {
+      const div = document.createElement("div");
+      div.className = "plano card";
+      div.innerHTML = `<h3>${p.name}</h3>
+        <p>Preço: $${p.price}</p>
+        <p>Lucro: ${p.profitPercent}%</p>
+        <button onclick="buyPlan('${p._id}', ${p.price})">Comprar</button>`;
+      container.appendChild(div);
+    });
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+async function buyPlan(planId, price){
+  const user = JSON.parse(localStorage.getItem("user"));
+  if(!user) { window.location.href = "login.html"; return; }
+
+  if(!user.id){
+    // demo local buy
+    if(user.balance < price){ alert("Saldo insuficiente"); return; }
+    user.balance -= price;
+    localStorage.setItem("user", JSON.stringify(user));
+    updateBalanceDisplay();
+    alert("Plano comprado no modo demo.");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/buy-plan", {
+      method: "POST",
+      headers: { "Content-Type":"application/json" },
+      body: JSON.stringify({ userId: user.id, planId })
+    });
+    const data = await res.json();
+    if(res.ok) {
+      alert("Plano comprado com sucesso (backend).");
+      // refresh balance from server:
+      const u = await fetch(`/api/users/${user.id}`);
+      const uu = await u.json();
+      localStorage.setItem("user", JSON.stringify(uu));
+      updateBalanceDisplay();
+    } else {
+      alert(data.error || "Erro ao comprar plano");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao comprar plano");
+  }
+}
